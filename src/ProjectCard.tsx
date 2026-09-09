@@ -1,5 +1,7 @@
 import type { MouseEvent } from 'react'
 import type { Accent, Project } from './projects'
+import { SitePreview } from './SitePreview'
+import previewSizes from './previews.json'
 
 const accents: Record<Accent, { color: string; tile: string; ring: string }> = {
   blue: {
@@ -50,10 +52,14 @@ function hostname(url: string) {
   return new URL(url).hostname.replace(/^www\./, '')
 }
 
+const sizes: Record<string, { w: number; h: number }> = previewSizes
+
 export function ProjectCard({ project }: { project: Project }) {
   const accent = accents[project.accent]
   const badge =
     project.status && project.status !== 'live' ? project.status : undefined
+  const host = hostname(project.url)
+  const preview = project.preview === false ? undefined : sizes[host]
 
   function trackPointer(event: MouseEvent<HTMLAnchorElement>) {
     const card = event.currentTarget
@@ -73,19 +79,19 @@ export function ProjectCard({ project }: { project: Project }) {
     >
       <div className="spotlight pointer-events-none absolute inset-0 -z-10" />
 
+      <SitePreview
+        host={host}
+        name={project.name}
+        image={preview}
+        tile={accent.tile}
+        monogram={monogram(project.name)}
+      />
+
       <div className="flex items-center gap-3">
-        <span
-          className={`flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${accent.tile} text-sm font-semibold text-white shadow-sm transition duration-300 group-hover:scale-105`}
-        >
-          {monogram(project.name)}
-        </span>
         <div className="min-w-0 flex-1">
           <h2 className="font-medium tracking-tight text-balance text-neutral-900 dark:text-neutral-100">
             {project.name}
           </h2>
-          <p className="truncate font-mono text-xs text-neutral-500 dark:text-neutral-500">
-            {hostname(project.url)}
-          </p>
         </div>
         <svg
           viewBox="0 0 16 16"

@@ -36,6 +36,17 @@
     animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
+  /* Screenshot pans up on hover to reveal the rest of the page. Distance and
+     duration come from the image's real proportions, set inline per card. */
+  .preview-scroll {
+    transition: transform var(--preview-duration, 4s) cubic-bezier(0.33, 0, 0.2, 1);
+  }
+
+  .group:hover .preview-scroll,
+  .group:focus-visible .preview-scroll {
+    transform: translateY(calc(-1 * var(--preview-shift, 0%)));
+  }
+
   /* Cursor-tracked highlight; --mx/--my are set from JS on pointer move. */
   .spotlight::before {
     content: "";
@@ -89,5 +100,12 @@
   .blob,
   .blob-slow {
     animation: none;
+  }
+
+  .preview-scroll,
+  .group:hover .preview-scroll,
+  .group:focus-visible .preview-scroll {
+    transition: none;
+    transform: none;
   }
 }

@@ -7,6 +7,8 @@ export type Project = {
   accent: Accent
   tags?: string[]
   status?: 'live' | 'in-progress' | 'archived'
+  /** Set false for anything private — no screenshot is captured or shown. */
+  preview?: boolean
 }
 
 // Edit this list to add, remove, or reorder projects.
@@ -19,6 +21,8 @@ export const projects: Project[] = [
     accent: 'blue',
     tags: ['Platform', 'Demand Gen'],
     status: 'live',
+    // Client portal behind a login; its screen shows real client names.
+    preview: false,
   },
   {
     name: 'Shania Mehta',
