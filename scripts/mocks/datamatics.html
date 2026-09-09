@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pulse — Campaign overview</title>
+    <style>
+      /*
+        Preview mockup only. Every client name, figure and date below is
+        invented — the real portal is behind a login and its data is not public.
+      */
+      :root {
+        --brand-900: #7d1717;
+        --brand-700: #a11d1d;
+        --brand-600: #b92222;
+        --surface: #fcfcfb;
+        --panel: #ffffff;
+        --line: #e7e5e1;
+        --ink: #0b0b0b;
+        --ink-2: #52514e;
+        --ink-3: #8a8880;
+        --good: #008300;
+        --warn: #eda100;
+        --bad: #e34948;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        display: flex;
+        width: 1280px;
+        background: var(--surface);
+        color: var(--ink);
+        font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ---------- sidebar ---------- */
+      aside {
+        width: 250px;
+        flex: none;
+        padding: 28px 20px;
+        color: #fff;
+        background: linear-gradient(160deg, var(--brand-700), var(--brand-900));
+      }
+
+      .logo { display: flex; align-items: center; gap: 10px; }
+      .bars { display: flex; align-items: flex-end; gap: 2px; height: 22px; }
+      .bars i {
+        width: 3px;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 1px;
+        display: block;
+      }
+      .logo-name { font-size: 17px; font-weight: 650; letter-spacing: -0.2px; }
+      .logo-sub { font-size: 9.5px; color: rgba(255, 255, 255, 0.7); }
+
+      nav { margin-top: 34px; display: flex; flex-direction: column; gap: 2px; }
+      nav a {
+        padding: 9px 11px;
+        border-radius: 7px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.78);
+        text-decoration: none;
+      }
+      nav a.on { background: rgba(255, 255, 255, 0.16); color: #fff; font-weight: 550; }
+
+      .aside-foot {
+        margin-top: 40px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+        font-size: 10.5px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      /* ---------- main ---------- */
+      main { flex: 1; padding: 26px 32px 40px; }
+
+      .topbar { display: flex; align-items: flex-end; justify-content: space-between; }
+      h1 { margin: 0; font-size: 21px; font-weight: 620; letter-spacing: -0.3px; }
+      .sub { margin: 4px 0 0; color: var(--ink-2); font-size: 12.5px; }
+      .range {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 8px;
+        padding: 7px 12px;
+        font-size: 12px;
+        color: var(--ink-2);
+      }
+
+      .kpis { margin-top: 22px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+      .kpi .label { font-size: 11.5px; color: var(--ink-2); }
+      .kpi .value { margin-top: 8px; font-size: 26px; font-weight: 640; letter-spacing: -0.6px; }
+      .kpi .delta { margin-top: 6px; font-size: 11.5px; color: var(--ink-3); }
+      .up { color: var(--good); font-weight: 600; }
+      .down { color: var(--bad); font-weight: 600; }
+
+      .panel {
+        margin-top: 18px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px 20px;
+      }
+      .panel h2 { margin: 0; font-size: 14px; font-weight: 600; }
+      .panel .hint { margin: 3px 0 0; font-size: 11.5px; color: var(--ink-2); }
+
+      /* single-series column chart */
+      .chart { margin-top: 20px; position: relative; height: 260px; }
+      .grid { position: absolute; inset: 0 0 22px 34px; }
+      .grid span {
+        position: absolute;
+        left: 0; right: 0;
+        border-top: 1px solid #f0eeea;
+        font-size: 10px;
+        color: var(--ink-3);
+      }
+      .grid span b { position: absolute; left: -34px; top: -6px; font-weight: 400; }
+      .cols {
+        position: absolute;
+        inset: 0 0 22px 34px;
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+      }
+      .cols div { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; }
+      .cols i {
+        display: block;
+        width: 100%;
+        background: var(--brand-600);
+        border-radius: 4px 4px 0 0;
+      }
+      .cols .peak i { background: var(--brand-900); }
+      .cols .peak em {
+        font-style: normal;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--ink);
+      }
+      .xaxis {
+        position: absolute;
+        left: 34px; right: 0; bottom: 0;
+        display: flex;
+        gap: 10px;
+      }
+      .xaxis span { flex: 1; text-align: center; font-size: 10.5px; color: var(--ink-3); }
+
+      /* table */
+      table { width: 100%; border-collapse: collapse; margin-top: 14px; table-layout: fixed; }
+      col.c-name { width: 42%; }
+      col.c-num { width: 13%; }
+      col.c-pace { width: 17%; }
+      col.c-status { width: 15%; }
+      th {
+        text-align: left;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--ink-3);
+        font-weight: 600;
+        padding: 0 0 9px;
+        border-bottom: 1px solid var(--line);
+      }
+      td { padding: 13px 0; border-bottom: 1px solid #f4f2ef; font-size: 12.5px; }
+      td.name { font-weight: 550; }
+      td .co { display: block; font-size: 11px; color: var(--ink-3); font-weight: 400; margin-top: 2px; }
+      .num { text-align: right; font-variant-numeric: tabular-nums; }
+      /* keeps the right-aligned Delivered column off the Pacing column */
+      th:nth-child(4), td:nth-child(4) { padding-left: 22px; }
+
+      /* inline-block: a bare inline span ignores width/height */
+      .bar { display: inline-block; width: 92px; height: 6px; border-radius: 3px; background: #eeece8; overflow: hidden; vertical-align: middle; }
+      .bar i { display: block; height: 100%; border-radius: 3px; background: var(--brand-600); }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 560;
+      }
+      .pill s { width: 6px; height: 6px; border-radius: 50%; }
+      .ok { background: rgba(0, 131, 0, 0.1); color: #056b05; }
+      .ok s { background: var(--good); }
+      .risk { background: rgba(237, 161, 0, 0.14); color: #8a5f00; }
+      .risk s { background: var(--warn); }
+      .late { background: rgba(227, 73, 72, 0.12); color: #b02724; }
+      .late s { background: var(--bad); }
+
+      .two { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-top: 18px; }
+      .two .panel { margin-top: 0; }
+      .rows { margin-top: 12px; }
+      .row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid #f4f2ef; font-size: 12.5px; }
+      .row:last-child { border-bottom: 0; }
+      .row .who { color: var(--ink-2); }
+      .dot-list i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 8px; background: var(--brand-600); }
+    </style>
+  </head>
+  <body>
+    <aside>
+      <div class="logo">
+        <span class="bars">
+          <i style="height: 40%"></i><i style="height: 70%"></i><i style="height: 100%"></i>
+          <i style="height: 55%"></i><i style="height: 85%"></i><i style="height: 35%"></i>
+        </span>
+        <span>
+          <span class="logo-name">Pulse</span><br />
+          <span class="logo-sub">by Datamatics Business Solutions</span>
+        </span>
+      </div>
+
+      <nav>
+        <a class="on" href="#">Overview</a>
+        <a href="#">Campaigns</a>
+        <a href="#">Lead review</a>
+        <a href="#">Job cards</a>
+        <a href="#">Invoices</a>
+        <a href="#">Reports</a>
+        <a href="#">Settings</a>
+      </nav>
+
+      <div class="aside-foot">ISO 27001:2022 · SOC 1 &amp; 2 Type II · GDPR</div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div>
+          <h1>Campaign overview</h1>
+          <p class="sub">12 active campaigns across 5 accounts</p>
+        </div>
+        <div class="range">Last 12 months</div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="label">Leads delivered</div>
+          <div class="value">18,420</div>
+          <div class="delta"><span class="up">+12.4%</span> vs. prior period</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Active campaigns</div>
+          <div class="value">12</div>
+          <div class="delta">3 closing this month</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Avg. pacing</div>
+          <div class="value">94%</div>
+          <div class="delta"><span class="down">−3.1%</span> vs. target</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Cost per lead</div>
+          <div class="value">$38</div>
+          <div class="delta"><span class="up">−$4</span> vs. prior period</div>
+        </div>
+      </div>
+
+      <section class="panel">
+        <h2>Leads delivered by month</h2>
+        <p class="hint">All accounts combined</p>
+        <div class="chart">
+          <div class="grid">
+            <span style="top: 0%"><b>2,400</b></span>
+            <span style="top: 25%"><b>1,800</b></span>
+            <span style="top: 50%"><b>1,200</b></span>
+            <span style="top: 75%"><b>600</b></span>
+            <span style="top: 100%"><b>0</b></span>
+          </div>
+          <div class="cols">
+            <div><i style="height: 46%"></i></div>
+            <div><i style="height: 53%"></i></div>
+            <div><i style="height: 49%"></i></div>
+            <div><i style="height: 61%"></i></div>
+            <div><i style="height: 58%"></i></div>
+            <div><i style="height: 67%"></i></div>
+            <div><i style="height: 72%"></i></div>
+            <div><i style="height: 65%"></i></div>
+            <div class="peak"><em>2,310</em><i style="height: 96%"></i></div>
+            <div><i style="height: 80%"></i></div>
+            <div><i style="height: 74%"></i></div>
+            <div><i style="height: 69%"></i></div>
+          </div>
+          <div class="xaxis">
+            <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span>
+            <span>Feb</span><span>Mar</span><span>Apr</span><span>May</span>
+            <span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Active campaigns</h2>
+        <p class="hint">Delivery against contracted volume</p>
+        <table>
+          <colgroup>
+            <col class="c-name" /><col class="c-num" /><col class="c-num" />
+            <col class="c-pace" /><col class="c-status" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Campaign</th>
+              <th class="num">Contracted</th>
+              <th class="num">Delivered</th>
+              <th>Pacing</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name">Q3 Cloud Security Whitepaper<span class="co">Northwind Media</span></td>
+              <td class="num">2,000</td>
+              <td class="num">1,940</td>
+              <td><span class="bar"><i style="width: 97%"></i></span></td>
+              <td><span class="pill ok"><s></s>On track</span></td>
+            </tr>
+            <tr>
+              <td class="name">Enterprise Data Platform Webinar<span class="co">Cobalt Systems</span></td>
+              <td class="num">1,500</td>
+              <td class="num">1,455</td>
+              <td><span class="bar"><i style="width: 97%"></i></span></td>
+              <td><span class="pill ok"><s></s>On track</span></td>
+            </tr>
+            <tr>
+              <td class="name">Healthcare Compliance Guide<span class="co">Meridian Health</span></td>
+              <td class="num">1,200</td>
+              <td class="num">918</td>
+              <td><span class="bar"><i style="width: 76%"></i></span></td>
+              <td><span class="pill risk"><s></s>At risk</span></td>
+            </tr>
+            <tr>
+              <td class="name">DevOps Buyer's Guide<span class="co">Brightline Cloud</span></td>
+              <td class="num">2,500</td>
+              <td class="num">2,480</td>
+              <td><span class="bar"><i style="width: 99%"></i></span></td>
+              <td><span class="pill ok"><s></s>On track</span></td>
+            </tr>
+            <tr>
+              <td class="name">Analytics Maturity Survey<span class="co">Harbor Analytics</span></td>
+              <td class="num">900</td>
+              <td class="num">465</td>
+              <td><span class="bar"><i style="width: 52%"></i></span></td>
+              <td><span class="pill late"><s></s>Behind</span></td>
+            </tr>
+            <tr>
+              <td class="name">Zero Trust Executive Brief<span class="co">Northwind Media</span></td>
+              <td class="num">1,800</td>
+              <td class="num">1,656</td>
+              <td><span class="bar"><i style="width: 92%"></i></span></td>
+              <td><span class="pill ok"><s></s>On track</span></td>
+            </tr>
+            <tr>
+              <td class="name">Supply Chain Automation Report<span class="co">Cobalt Systems</span></td>
+              <td class="num">1,100</td>
+              <td class="num">869</td>
+              <td><span class="bar"><i style="width: 79%"></i></span></td>
+              <td><span class="pill risk"><s></s>At risk</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="two">
+        <section class="panel">
+          <h2>Recent lead batches</h2>
+          <div class="rows">
+            <div class="row"><span>Batch #4821 · 420 leads</span><span class="who">Approved</span></div>
+            <div class="row"><span>Batch #4820 · 385 leads</span><span class="who">Approved</span></div>
+            <div class="row"><span>Batch #4819 · 512 leads</span><span class="who">In review</span></div>
+            <div class="row"><span>Batch #4818 · 298 leads</span><span class="who">Approved</span></div>
+            <div class="row"><span>Batch #4817 · 441 leads</span><span class="who">Approved</span></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Leads by account</h2>
+          <div class="rows dot-list">
+            <div class="row"><span><i></i>Brightline Cloud</span><span class="who">5,120</span></div>
+            <div class="row"><span><i style="opacity:.82"></i>Northwind Media</span><span class="who">4,680</span></div>
+            <div class="row"><span><i style="opacity:.64"></i>Cobalt Systems</span><span class="who">3,940</span></div>
+            <div class="row"><span><i style="opacity:.46"></i>Meridian Health</span><span class="who">2,830</span></div>
+            <div class="row"><span><i style="opacity:.3"></i>Harbor Analytics</span><span class="who">1,850</span></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

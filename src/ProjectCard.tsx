@@ -59,7 +59,8 @@ export function ProjectCard({ project }: { project: Project }) {
   const badge =
     project.status && project.status !== 'live' ? project.status : undefined
   const host = hostname(project.url)
-  const preview = project.preview === false ? undefined : sizes[host]
+  // Whatever the capture script produced — a live screenshot or a mockup.
+  const preview = sizes[host]
 
   function trackPointer(event: MouseEvent<HTMLAnchorElement>) {
     const card = event.currentTarget

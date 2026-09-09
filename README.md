@@ -42,9 +42,19 @@ npm run capture
 
 That reads the urls from `src/projects.ts`, writes one webp per host, and
 updates `src/previews.json` with the image sizes the hover animation needs.
-Anything marked `preview: false` is skipped and falls back to a gradient tile
-with its initials, which is what private or login-gated sites should use.
 Uninstall `playwright` and `sharp` afterwards to keep deploy builds lean.
+
+### Sites that shouldn't be screenshotted
+
+Never point the capture script at anything behind a login or showing customer
+data. Mark it `preview: false` and it is skipped entirely; the card falls back
+to a gradient tile with the project's initials.
+
+If you still want a visual, add `mock: 'name.html'` alongside it and drop a
+self-contained page in `scripts/mocks/`. The script renders that local file
+instead of the live site, so the preview shows the product with invented
+accounts and figures rather than anyone's real data. `scripts/mocks/datamatics.html`
+is the working example.
 
 ## Deploying
 

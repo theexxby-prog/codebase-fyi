@@ -7,8 +7,10 @@ export type Project = {
   accent: Accent
   tags?: string[]
   status?: 'live' | 'in-progress' | 'archived'
-  /** Set false for anything private — no screenshot is captured or shown. */
+  /** Set false to never screenshot the live site (private or login-gated). */
   preview?: boolean
+  /** Render this file from scripts/mocks/ instead of the live site. */
+  mock?: string
 }
 
 // Edit this list to add, remove, or reorder projects.
@@ -21,8 +23,10 @@ export const projects: Project[] = [
     accent: 'blue',
     tags: ['Platform', 'Demand Gen'],
     status: 'live',
-    // Client portal behind a login; its screen shows real client names.
+    // Real portal is login-gated and shows client data, so the preview is a
+    // mockup with invented accounts and figures.
     preview: false,
+    mock: 'datamatics.html',
   },
   {
     name: 'Shania Mehta',
