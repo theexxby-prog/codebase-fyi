@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="A running list of projects being built." />
     <title>codebase.fyi</title>
+    <script>
+      // Applied before first paint so the theme doesn't flash on load.
+      try {
+        var stored = localStorage.getItem('codebase-fyi-theme')
+        var dark = stored
+          ? stored === 'dark'
+          : matchMedia('(prefers-color-scheme: dark)').matches
+        if (dark) document.documentElement.classList.add('dark')
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
