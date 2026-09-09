@@ -6,20 +6,29 @@ export type Project = {
   status?: 'live' | 'in-progress' | 'archived'
 }
 
-// Edit this list to add, remove, or reorder your projects.
+// Edit this list to add, remove, or reorder projects.
 export const projects: Project[] = [
   {
-    name: 'Shania Mehta Portfolio',
-    description: 'Personal portfolio site built with React and Tailwind.',
-    url: 'https://shania.mehtahouse.cc',
-    tags: ['React', 'Tailwind'],
+    name: 'Datamatics Business Solutions',
+    description: 'Campaign management and lead generation platform for B2B demand gen.',
+    url: 'https://datamatics.codebase.fyi',
+    tags: ['Platform', 'Demand Gen'],
     status: 'live',
   },
   {
-    name: 'Project Two',
-    description: 'Short description of what this project does.',
-    url: 'https://example.com',
-    tags: ['Tag'],
-    status: 'in-progress',
+    name: 'Shania Mehta',
+    description:
+      'Portfolio for an Associate Account Executive at BerlinRosen, covering PR strategy for NYC cities and real estate brands.',
+    url: 'https://shania.mehtahouse.cc',
+    tags: ['Portfolio', 'React'],
+    status: 'live',
+  },
+  {
+    name: 'Samara Mehta',
+    description:
+      'Portfolio for a hospitality professional and kinesiology student, from barista to assistant manager.',
+    url: 'https://samara.mehtahouse.cc',
+    tags: ['Portfolio', 'React'],
+    status: 'live',
   },
 ]
