@@ -15,8 +15,23 @@ export type Project = {
   added?: string
 }
 
-// Edit this list to add, remove, or reorder projects.
+// Edit this list to add, remove, or reorder projects. The first one is what
+// the page opens on.
 export const projects: Project[] = [
+  {
+    name: 'ledger',
+    description:
+      'Cards, annual fees, credits and subscriptions in one place, fed by SimpleFIN. Tells you which card to use, which fee is worth it, and what to cancel before it renews.',
+    url: 'https://ledger.codebase.fyi',
+    accent: 'violet',
+    tags: ['Workers', 'Durable Objects', 'SimpleFIN', 'Mac mirror'],
+    status: 'live',
+    added: '2026-09-13',
+    // Behind a PIN and full of real card data, so the preview is a mockup
+    // with invented cards and figures.
+    preview: false,
+    mock: 'ledger.html',
+  },
   {
     name: 'plexpull',
     description:
@@ -26,8 +41,8 @@ export const projects: Project[] = [
     tags: ['Workers', 'D1', 'Python', 'Mac app'],
     status: 'live',
     added: '2026-09-13',
-    // Sits behind Cloudflare Access and browses a private library, so the
-    // preview is a mockup with invented titles and no real artwork.
+    // Sits behind a PIN and browses a private library, so the preview is a
+    // mockup with invented titles and no real artwork.
     preview: false,
     mock: 'plexpull.html',
   },
@@ -67,7 +82,8 @@ export const projects: Project[] = [
   },
 ]
 
-/** The url of the most recently added project, for the "New" badge. */
-export const newestUrl = projects
-  .filter((p) => p.added)
-  .sort((a, b) => (b.added! > a.added! ? 1 : -1))[0]?.url
+/** The url of the most recently added project (first in list order on a tie), for the "New" badge. */
+export const newestUrl = projects.reduce<Project | undefined>(
+  (best, p) => (p.added && (!best?.added || p.added > best.added) ? p : best),
+  undefined,
+)?.url

@@ -36,15 +36,29 @@
     animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
-  /* Screenshot pans up on hover to reveal the rest of the page. Distance and
-     duration come from the image's real proportions, set inline per card. */
-  .preview-scroll {
-    transition: transform var(--preview-duration, 4s) cubic-bezier(0.33, 0, 0.2, 1);
+  /* The stage screenshot is cropped to the frame and slides down on hover to
+     show the rest of the page; the duration scales with the page's height. */
+  .stage-img {
+    object-position: 50% 0%;
+    transition: object-position var(--pan, 6s) cubic-bezier(0.33, 0, 0.2, 1);
   }
 
-  .group:hover .preview-scroll,
-  .group:focus-visible .preview-scroll {
-    transform: translateY(calc(-1 * var(--preview-shift, 0%)));
+  .stage:hover .stage-img,
+  .stage:focus-within .stage-img {
+    object-position: 50% 100%;
+  }
+
+  /* Autoplay countdown under the active rail item. */
+  .progress {
+    transform: scaleX(0);
+  }
+
+  .progress-run {
+    animation: progress var(--autoplay, 7s) linear forwards;
+  }
+
+  .reveal-fast {
+    animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   /* Cursor-tracked highlight; --mx/--my are set from JS on pointer move. */
@@ -78,6 +92,15 @@
   }
 }
 
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @keyframes drift {
   0%, 100% {
     transform: translate3d(0, 0, 0) scale(1);
@@ -102,10 +125,15 @@
     animation: none;
   }
 
-  .preview-scroll,
-  .group:hover .preview-scroll,
-  .group:focus-visible .preview-scroll {
+  .reveal-fast,
+  .progress-run {
+    animation: none;
+  }
+
+  .stage-img,
+  .stage:hover .stage-img,
+  .stage:focus-within .stage-img {
     transition: none;
-    transform: none;
+    object-position: 50% 0%;
   }
 }
