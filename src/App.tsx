@@ -17,8 +17,9 @@ function App() {
     <div className="text-neutral-900 dark:text-neutral-100">
       <Background />
 
-      {/* One screen on a laptop: header, the showcase, footer. Phones scroll. */}
-      <div className="relative z-10 mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-5 py-5 sm:px-8 sm:py-6 md:h-dvh md:gap-8">
+      {/* min-h-dvh fills a roomy screen without capping a cramped one, so tall
+          content scrolls instead of being clipped by a hard viewport height. */}
+      <div className="relative z-10 mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-5 py-5 sm:px-8 sm:py-6 lg:gap-8">
         <header className="reveal flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
           <div className="flex items-baseline gap-4">
             <h1 className="text-3xl font-semibold tracking-tighter sm:text-4xl">

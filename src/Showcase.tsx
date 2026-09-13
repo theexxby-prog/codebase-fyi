@@ -74,7 +74,7 @@ export function Showcase() {
     <section
       aria-roledescription="carousel"
       aria-label="Projects"
-      className="grid min-h-0 flex-1 gap-5 md:grid-cols-[minmax(0,1fr)_19rem] md:gap-8 lg:grid-cols-[minmax(0,1fr)_21rem]"
+      className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-8"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -82,7 +82,7 @@ export function Showcase() {
     >
       <Stage project={active} index={index} onPrev={() => goTo(index - 1)} onNext={() => goTo(index + 1)} />
 
-      <div className="flex min-h-0 flex-col gap-4">
+      <div className="flex min-h-0 min-w-0 flex-col gap-4">
         <Details project={active} />
         <Rail index={index} onSelect={(i) => goTo(i)} running={running} />
       </div>
@@ -104,7 +104,7 @@ function Stage({
   const accent = accents[project.accent]
   return (
     <div
-      className="stage group relative flex min-h-0 flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl shadow-neutral-900/5 dark:border-neutral-800 dark:bg-neutral-900/60 dark:shadow-black/40"
+      className="stage group relative flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl shadow-neutral-900/5 dark:border-neutral-800 dark:bg-neutral-900/60 dark:shadow-black/40"
       style={{ '--accent': accent.color } as CSSProperties}
     >
       <div className="flex items-center gap-1.5 border-b border-neutral-200 bg-neutral-100 px-3 py-2 dark:border-neutral-800 dark:bg-neutral-800/60">
@@ -122,7 +122,7 @@ function Stage({
         target="_blank"
         rel="noreferrer"
         aria-label={`Open ${project.name}`}
-        className="relative block aspect-[16/10] min-h-0 flex-1 bg-neutral-100 md:aspect-auto dark:bg-neutral-800"
+        className="relative block aspect-[16/10] min-h-0 flex-1 bg-neutral-100 lg:aspect-auto dark:bg-neutral-800"
       >
         {projects.map((p, i) => {
           const host = hostname(p.url)
@@ -219,7 +219,7 @@ function Details({ project }: { project: Project }) {
 function Rail({ index, onSelect, running }: { index: number; onSelect: (i: number) => void; running: boolean }) {
   return (
     <ul
-      className="-mx-1 flex min-h-0 gap-2 overflow-x-auto px-1 pb-1 md:mt-auto md:flex-col md:overflow-visible md:pb-0"
+      className="-mx-1 flex min-h-0 gap-2 overflow-x-auto px-1 pb-1 lg:mt-auto lg:flex-col lg:overflow-y-auto lg:pb-0"
       role="tablist"
       aria-label="All projects"
     >
@@ -227,14 +227,14 @@ function Rail({ index, onSelect, running }: { index: number; onSelect: (i: numbe
         const on = i === index
         const accent = accents[p.accent]
         return (
-          <li key={p.url} className="shrink-0 md:shrink">
+          <li key={p.url} className="shrink-0 lg:shrink">
             <button
               type="button"
               role="tab"
               aria-selected={on}
               onClick={() => onSelect(i)}
               style={{ '--accent': accent.color } as CSSProperties}
-              className={`rail-item relative flex w-44 items-center gap-3 overflow-hidden rounded-xl border px-3 py-2.5 text-left transition md:w-full ${
+              className={`rail-item relative flex w-44 items-center gap-3 overflow-hidden rounded-xl border px-3 py-2.5 text-left transition lg:w-full ${
                 on
                   ? 'border-neutral-300 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900'
                   : 'border-transparent hover:bg-white/70 dark:hover:bg-neutral-900/60'
