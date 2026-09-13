@@ -8,6 +8,9 @@
  * Reads the target URLs straight out of src/projects.ts so the two can't
  * drift, writes one webp per host plus src/previews.json (intrinsic sizes,
  * which the card uses to work out how far to scroll on hover).
+ *
+ * Pass host names to capture only those and leave the other images and their
+ * recorded sizes as they are:  npm run capture -- plexpull.codebase.fyi
  */
 import { chromium } from 'playwright'
 import sharp from 'sharp'
@@ -17,6 +20,7 @@ const WIDTH = 900
 const MAX_RATIO = 3.2 // cap page height so the hover scroll stays watchable
 
 const source = readFileSync(new URL('../src/projects.ts', import.meta.url), 'utf8')
+const only = process.argv.slice(2)
 
 // Split into per-project blocks so each flag stays tied to its own url.
 const targets = source
@@ -29,6 +33,7 @@ const targets = source
   }))
   // A mock stands in for sites that can't be shot live (private, login-gated).
   .filter((t) => t.url && (t.mock || !t.skip))
+  .filter((t) => only.length === 0 || only.includes(new URL(t.url).hostname.replace(/^www\./, '')))
 
 if (targets.length === 0) {
   console.error('No capturable projects found in src/projects.ts')
@@ -45,7 +50,8 @@ const browser = await chromium.launch({
   ...(process.env.HTTPS_PROXY ? { proxy: { server: process.env.HTTPS_PROXY } } : {}),
 })
 
-const sizes = {}
+const sizesFile = new URL('../src/previews.json', import.meta.url)
+const sizes = only.length ? JSON.parse(readFileSync(sizesFile, 'utf8')) : {}
 
 for (const { url, mock } of targets) {
   const host = new URL(url).hostname.replace(/^www\./, '')
@@ -96,10 +102,7 @@ for (const { url, mock } of targets) {
   await ctx.close()
 }
 
-writeFileSync(
-  new URL('../src/previews.json', import.meta.url),
-  `${JSON.stringify(sizes, null, 2)}\n`,
-)
+writeFileSync(sizesFile, `${JSON.stringify(sizes, null, 2)}\n`)
 
 await browser.close()
 console.log('wrote src/previews.json')

@@ -1,5 +1,5 @@
 import type { MouseEvent } from 'react'
-import type { Accent, Project } from './projects'
+import { newestUrl, type Accent, type Project } from './projects'
 import { SitePreview } from './SitePreview'
 import previewSizes from './previews.json'
 
@@ -115,6 +115,11 @@ export function ProjectCard({ project }: { project: Project }) {
       </p>
 
       <div className="mt-5 flex flex-wrap items-center gap-2">
+        {project.url === newestUrl && (
+          <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+            New
+          </span>
+        )}
         {badge && (
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusStyles[badge]}`}

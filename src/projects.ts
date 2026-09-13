@@ -11,10 +11,26 @@ export type Project = {
   preview?: boolean
   /** Render this file from scripts/mocks/ instead of the live site. */
   mock?: string
+  /** ISO date the project went up; the most recent one gets a "New" badge. */
+  added?: string
 }
 
 // Edit this list to add, remove, or reorder projects.
 export const projects: Project[] = [
+  {
+    name: 'plexpull',
+    description:
+      'Browse a shared Plex library from any device and queue downloads; a Mac app picks them up and pulls the files home. Cloudflare Workers, D1 and a stdlib-only Python server.',
+    url: 'https://plexpull.codebase.fyi',
+    accent: 'emerald',
+    tags: ['Workers', 'D1', 'Python', 'Mac app'],
+    status: 'live',
+    added: '2026-09-13',
+    // Sits behind Cloudflare Access and browses a private library, so the
+    // preview is a mockup with invented titles and no real artwork.
+    preview: false,
+    mock: 'plexpull.html',
+  },
   {
     name: 'Datamatics Business Solutions',
     description:
@@ -27,6 +43,7 @@ export const projects: Project[] = [
     // mockup with invented accounts and figures.
     preview: false,
     mock: 'datamatics.html',
+    added: '2026-09-09',
   },
   {
     name: 'Shania Mehta',
@@ -36,6 +53,7 @@ export const projects: Project[] = [
     accent: 'rose',
     tags: ['Portfolio', 'React'],
     status: 'live',
+    added: '2026-09-05',
   },
   {
     name: 'Samara Mehta',
@@ -45,5 +63,11 @@ export const projects: Project[] = [
     accent: 'amber',
     tags: ['Portfolio', 'React'],
     status: 'live',
+    added: '2026-09-05',
   },
 ]
+
+/** The url of the most recently added project, for the "New" badge. */
+export const newestUrl = projects
+  .filter((p) => p.added)
+  .sort((a, b) => (b.added! > a.added! ? 1 : -1))[0]?.url
