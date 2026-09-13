@@ -14,7 +14,8 @@ const tiles: Record<Accent, string> = {
   emerald: 'from-emerald-500 to-teal-600',
 }
 
-const sizes: Record<string, { w: number; h: number }> = previewSizes
+type Size = { w: number; h: number }
+const sizes: Record<string, Size & { mobile?: Size }> = previewSizes
 
 const hostname = (url: string) => new URL(url).hostname.replace(/^www\./, '')
 
@@ -108,7 +109,7 @@ function Row({ project }: { project: Project }) {
   )
 }
 
-function Preview({ project, host, image }: { project: Project; host: string; image?: { w: number; h: number } }) {
+function Preview({ project, host, image }: { project: Project; host: string; image?: Size & { mobile?: Size } }) {
   return (
     <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
       <div className="flex items-center gap-1.5 border-b border-neutral-200 bg-neutral-50 px-3 py-2 dark:border-neutral-800 dark:bg-neutral-800/60">
@@ -117,18 +118,30 @@ function Preview({ project, host, image }: { project: Project; host: string; ima
         <span className="size-2 rounded-full bg-neutral-300 dark:bg-neutral-600" />
         <span className="ml-2 truncate font-mono text-[11px] text-neutral-500">{host}</span>
       </div>
-      <div className="relative aspect-[16/10] bg-neutral-100 dark:bg-neutral-800">
+      <div className="relative aspect-[4/5] bg-neutral-100 md:aspect-[16/10] dark:bg-neutral-800">
         {image ? (
-          <img
-            src={`/previews/${host}.webp`}
-            alt={`Screenshot of ${project.name}`}
-            width={image.w}
-            height={image.h}
-            loading="lazy"
-            decoding="async"
-            className="preview-img size-full object-cover"
-            style={{ '--pan': `${Math.min(14, 3 + (image.h / image.w) * 3)}s` } as CSSProperties}
-          />
+          // Phones get a capture of the site's own phone layout; anything
+          // wider gets the desktop capture.
+          <picture className="contents">
+            {image.mobile && (
+              <source
+                media="(max-width: 767px)"
+                srcSet={`/previews/${host}.mobile.webp`}
+                width={image.mobile.w}
+                height={image.mobile.h}
+              />
+            )}
+            <img
+              src={`/previews/${host}.webp`}
+              alt={`Screenshot of ${project.name}`}
+              width={image.w}
+              height={image.h}
+              loading="lazy"
+              decoding="async"
+              className="preview-img size-full object-cover"
+              style={{ '--pan': `${Math.min(14, 3 + (image.h / image.w) * 3)}s` } as CSSProperties}
+            />
+          </picture>
         ) : (
           <div className={`flex size-full items-center justify-center bg-gradient-to-br ${tiles[project.accent]}`}>
             <span className="text-5xl font-semibold tracking-tight text-white/90">{monogram(project.name)}</span>
