@@ -1,10 +1,14 @@
 export type Accent = 'blue' | 'rose' | 'amber' | 'violet' | 'emerald'
 
+export type Group = 'personal' | 'work' | 'family'
+
 export type Project = {
   name: string
   description: string
   url: string
   accent: Accent
+  /** Which section of the page the project sits under. */
+  group: Group
   tags?: string[]
   status?: 'live' | 'in-progress' | 'archived'
   /** Set false to never screenshot the live site (private or login-gated). */
@@ -15,8 +19,15 @@ export type Project = {
   added?: string
 }
 
-// Edit this list to add, remove, or reorder projects. The first one is what
-// the page opens on.
+// Section order on the page, with the heading each one shows.
+export const groups: { id: Group; heading: string }[] = [
+  { id: 'personal', heading: 'For myself, mostly' },
+  { id: 'work', heading: 'Work' },
+  { id: 'family', heading: 'Family portfolios' },
+]
+
+// Edit this list to add, remove, or reorder projects. Order within a
+// section follows list order.
 export const projects: Project[] = [
   {
     name: 'ledger',
@@ -24,6 +35,7 @@ export const projects: Project[] = [
       'Cards, annual fees, credits and subscriptions in one place, fed by SimpleFIN. Tells you which card to use, which fee is worth it, and what to cancel before it renews.',
     url: 'https://ledger.codebase.fyi',
     accent: 'violet',
+    group: 'personal',
     tags: ['Workers', 'Durable Objects', 'SimpleFIN', 'Mac mirror'],
     status: 'live',
     added: '2026-09-13',
@@ -38,6 +50,7 @@ export const projects: Project[] = [
       'Browse a shared Plex library from any device and queue downloads; a Mac app picks them up and pulls the files home. Cloudflare Workers, D1 and a stdlib-only Python server.',
     url: 'https://plexpull.codebase.fyi',
     accent: 'emerald',
+    group: 'personal',
     tags: ['Workers', 'D1', 'Python', 'Mac app'],
     status: 'live',
     added: '2026-09-13',
@@ -52,6 +65,7 @@ export const projects: Project[] = [
       'Campaign management and lead generation platform for B2B demand gen.',
     url: 'https://datamatics.codebase.fyi',
     accent: 'blue',
+    group: 'work',
     tags: ['Platform', 'Demand Gen'],
     status: 'live',
     // Real portal is login-gated and shows client data, so the preview is a
@@ -66,6 +80,7 @@ export const projects: Project[] = [
       'Portfolio for an Associate Account Executive at BerlinRosen, covering PR strategy for NYC cities and real estate brands.',
     url: 'https://shania.mehtahouse.cc',
     accent: 'rose',
+    group: 'family',
     tags: ['Portfolio', 'React'],
     status: 'live',
     added: '2026-09-05',
@@ -76,6 +91,7 @@ export const projects: Project[] = [
       'Portfolio for a hospitality professional and kinesiology student, from barista to assistant manager.',
     url: 'https://samara.mehtahouse.cc',
     accent: 'amber',
+    group: 'family',
     tags: ['Portfolio', 'React'],
     status: 'live',
     added: '2026-09-05',
