@@ -12,9 +12,10 @@ function formatDate(iso: string) {
 
 function Hero() {
   return (
-    // Height tracks the viewport but caps at 800px, so a tall monitor
-    // doesn't open on a wall of empty black before the headline.
-    <header className="relative isolate flex min-h-[72svh] flex-col justify-end overflow-hidden md:min-h-[min(78svh,800px)]">
+    // Height tracks the viewport but caps at 720px. Copy is bottom-pinned on
+    // phones and vertically centered from md up, so it doesn't sink to the
+    // bottom of a wide screen.
+    <header className="relative isolate flex min-h-[72svh] flex-col justify-end overflow-hidden md:min-h-[min(74svh,720px)] md:justify-center">
       {/* Ribbon backdrop; the ribbon lives in the right half, so the copy sits left. */}
       <picture>
         <source media="(max-width: 767px)" srcSet="/hero-960.webp" />
@@ -25,12 +26,17 @@ function Hero() {
           height={1072}
           fetchPriority="high"
           decoding="async"
-          className="absolute inset-0 -z-20 size-full object-cover object-[70%_50%] md:object-[50%_50%]"
+          // From md up the image is scaled up and nudged up-left so the ribbon
+          // rides higher and closer to the headline. Scale exceeds the shift,
+          // so no edge is ever uncovered.
+          className="absolute inset-0 -z-20 size-full object-cover object-[70%_50%] md:-translate-x-[4%] md:-translate-y-[6%] md:scale-[1.14] md:object-[50%_50%]"
         />
       </picture>
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent" />
 
-      <div className="mx-auto w-full max-w-6xl px-6 pt-10 pb-12 sm:px-8 md:pb-20">
+      {/* Fixed left gutter from md up rather than the centered column the
+          grid uses, so the headline starts near the edge on wide screens. */}
+      <div className="w-full px-6 pt-10 pb-12 sm:px-8 md:px-14 md:py-16 lg:px-20">
         <p className="reveal font-mono text-xs tracking-wider text-neutral-400 uppercase">codebase.fyi</p>
         <h1
           className="reveal mt-4 max-w-4xl font-display text-[2.75rem] leading-[0.95] font-semibold tracking-[-0.03em] text-balance sm:text-6xl md:text-7xl lg:text-8xl"
