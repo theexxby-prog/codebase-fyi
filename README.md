@@ -19,8 +19,10 @@ Edit `src/projects.ts` and add an entry to the `projects` array:
   name: 'Project Name',
   description: 'One line about it.',
   url: 'https://example.com',
-  accent: 'violet',      // blue | rose | amber | violet | emerald
+  accent: 'violet',      // blue | rose | amber | violet | emerald (fallback tile only)
+  group: 'personal',     // personal | work | family (which section it appears under)
   tags: ['React'],       // optional
+  added: '2026-01-01',   // optional; the newest gets a "New" badge and the date shows on the row
   status: 'live',        // optional: 'live' | 'in-progress' | 'archived'
   preview: false,        // optional: skip the screenshot (private sites)
 }
@@ -30,7 +32,7 @@ Then regenerate the previews (below) so the new project gets one.
 
 ## Screenshot previews
 
-Each card frames a screenshot of the site that pans down on hover. The images
+Each row frames a screenshot of the site that pans down on hover. The images
 live in `public/previews/` and are committed, so a normal build needs nothing
 extra. Regenerate them when a site changes, or after adding a project:
 
@@ -47,7 +49,7 @@ Uninstall `playwright` and `sharp` afterwards to keep deploy builds lean.
 ### Sites that shouldn't be screenshotted
 
 Never point the capture script at anything behind a login or showing customer
-data. Mark it `preview: false` and it is skipped entirely; the card falls back
+data. Mark it `preview: false` and it is skipped entirely; the row falls back
 to a gradient tile with the project's initials.
 
 If you still want a visual, add `mock: 'name.html'` alongside it and drop a

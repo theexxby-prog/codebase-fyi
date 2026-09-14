@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>plexpull — mock</title>
 <style>
   /*
@@ -70,6 +71,25 @@
   .job .a { color:var(--muted); font-size:12px; }
   .prog { grid-column:1/-1; height:3px; background:var(--line); border-radius:2px; overflow:hidden; margin-top:-3px; }
   .prog i { display:block; height:100%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
+
+  /* Phone layout for the mobile preview capture. */
+  @media (max-width: 600px) {
+    #shell { grid-template-columns:minmax(0,1fr); min-height:0; }
+    main { min-width:0; }
+    header { flex-wrap:wrap; gap:10px; padding:14px 16px 8px; }
+    .search { flex:1 0 100%; max-width:none; order:3; }
+    .right { margin-left:auto; }
+    .pill span { display:none; }
+    nav { display:none; }
+    main { padding:6px 16px 32px; }
+    .row { margin:8px 0 20px; }
+    .strip { gap:12px; }
+    .card { flex:0 0 118px; }
+    .poster { padding:10px; } .poster b { font-size:13px; }
+    .t { font-size:13px; }
+    .job { grid-template-columns:1fr auto; }
+    .job .a { display:none; }
+  }
 </style>
 </head>
 <body>

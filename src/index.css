@@ -15,7 +15,6 @@
     margin: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
-    /* Lives on body so the fixed background layer paints above it. */
     background-color: #fafafa;
   }
 
@@ -25,114 +24,23 @@
 }
 
 @layer components {
-  /* Dot grid that fades toward the bottom of the viewport. */
-  .dot-grid {
-    background-image: radial-gradient(currentColor 1px, transparent 1px);
-    background-size: 22px 22px;
-    mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 75%);
-  }
-
-  .reveal {
-    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-
-  /* The stage screenshot is cropped to the frame and slides down on hover to
-     show the rest of the page; the duration scales with the page's height. */
-  .stage-img {
+  /* The preview is cropped to the frame and slides down while the row is
+     hovered to show the rest of the page; longer pages take longer. */
+  .preview-img {
     object-position: 50% 0%;
     transition: object-position var(--pan, 6s) cubic-bezier(0.33, 0, 0.2, 1);
   }
 
-  .stage:hover .stage-img,
-  .stage:focus-within .stage-img {
+  .group:hover .preview-img,
+  .group:focus-visible .preview-img {
     object-position: 50% 100%;
   }
-
-  /* Autoplay countdown under the active rail item. */
-  .progress {
-    transform: scaleX(0);
-  }
-
-  .progress-run {
-    animation: progress var(--autoplay, 7s) linear forwards;
-  }
-
-  .reveal-fast {
-    animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-
-  /* Cursor-tracked highlight; --mx/--my are set from JS on pointer move. */
-  .spotlight::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    opacity: 0;
-    transition: opacity 0.3s;
-    background: radial-gradient(
-      260px circle at var(--mx, 50%) var(--my, 50%),
-      color-mix(in oklab, var(--accent) 22%, transparent),
-      transparent 70%
-    );
-  }
-
-  .group:hover .spotlight::before {
-    opacity: 1;
-  }
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes progress {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes drift {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(4%, -6%, 0) scale(1.12);
-  }
-}
-
-.blob {
-  animation: drift 18s ease-in-out infinite;
-}
-
-.blob-slow {
-  animation: drift 26s ease-in-out infinite reverse;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .blob,
-  .blob-slow {
-    animation: none;
-  }
-
-  .reveal-fast,
-  .progress-run {
-    animation: none;
-  }
-
-  .stage-img,
-  .stage:hover .stage-img,
-  .stage:focus-within .stage-img {
+  .preview-img,
+  .group:hover .preview-img,
+  .group:focus-visible .preview-img {
     transition: none;
     object-position: 50% 0%;
   }

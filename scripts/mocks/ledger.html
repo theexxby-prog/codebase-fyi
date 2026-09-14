@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ledger — mock</title>
 <style>
   /*
@@ -63,6 +64,26 @@
   .sub .m { color:var(--muted); font-size:12px; } .sub .amt { font-variant-numeric:tabular-nums; }
   .tag { font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--line2); color:var(--ink2); }
   .tag.k { border-color:transparent; background:rgba(143,202,162,.18); color:var(--accent); } .tag.c { border-color:transparent; background:rgba(226,133,123,.18); color:var(--red); }
+
+  /* Phone layout for the mobile preview capture. */
+  @media (max-width: 600px) {
+    #shell { grid-template-columns:1fr; min-height:0; }
+    nav { display:flex; flex-wrap:wrap; align-items:center; gap:4px; padding:14px 12px 10px; border-right:0; border-bottom:1px solid var(--line); }
+    .brand { width:100%; padding:0 6px 10px; }
+    nav .grp, nav .foot { display:none; }
+    nav .b { padding:6px 10px; font-size:13px; }
+    nav .b .badge { margin-left:6px; }
+    main { padding:18px 16px 32px; }
+    h1 { font-size:22px; }
+    .stats { grid-template-columns:1fr 1fr; gap:10px; }
+    .stat { padding:12px 14px; } .stat b { font-size:20px; }
+    .item { grid-template-columns:34px 1fr; padding:12px 14px; }
+    .item .act { display:none; }
+    .cards { grid-template-columns:1fr 1fr; gap:10px; }
+    .art { height:96px; padding:12px; }
+    .sub { grid-template-columns:1fr auto auto; padding:11px 12px; }
+    .sub .m:last-child { display:none; }
+  }
 </style>
 </head>
 <body>
