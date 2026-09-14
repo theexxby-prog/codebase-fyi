@@ -154,7 +154,7 @@ function Preview({ project, host }: { project: Project; host: string }) {
   return (
     <div className="relative">
       <div aria-hidden="true" className="glow absolute -inset-8 -z-10 rounded-[2rem] blur-2xl md:-inset-12" />
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-neutral-900 ring-1 ring-white/10 shadow-2xl shadow-black/60 md:aspect-[16/10]">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-neutral-900 ring-1 ring-white/10 shadow-2xl shadow-black/60 transition-transform duration-500 ease-out group-hover:-translate-y-1 md:aspect-[16/10]">
         {image ? (
           // Phones get a capture of the site's own phone layout; anything
           // wider gets the desktop capture.
