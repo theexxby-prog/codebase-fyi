@@ -12,7 +12,9 @@ function formatDate(iso: string) {
 
 function Hero() {
   return (
-    <header className="relative isolate flex min-h-[72svh] flex-col justify-end overflow-hidden md:min-h-[78svh]">
+    // Height tracks the viewport but caps at 800px, so a tall monitor
+    // doesn't open on a wall of empty black before the headline.
+    <header className="relative isolate flex min-h-[72svh] flex-col justify-end overflow-hidden md:min-h-[min(78svh,800px)]">
       {/* Ribbon backdrop; the ribbon lives in the right half, so the copy sits left. */}
       <picture>
         <source media="(max-width: 767px)" srcSet="/hero-960.webp" />
@@ -63,6 +65,7 @@ function App() {
 
       <footer className="mx-auto mt-24 flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-white/10 px-6 pt-6 pb-12 font-mono text-xs text-neutral-500 sm:px-8 md:mt-32">
         <p>&copy; {new Date().getFullYear()} codebase.fyi</p>
+        <p className="hidden sm:block">React, Vite and Tailwind on Vercel</p>
         <a
           href="https://github.com/theexxby-prog/codebase-fyi"
           target="_blank"
