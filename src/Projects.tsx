@@ -2,22 +2,23 @@ import type { CSSProperties } from 'react'
 import { groups, newestUrl, projects, type Accent, type Project } from './projects'
 import previewSizes from './previews.json'
 
-// Every project on the page at once, grouped into sections. A row is a
-// screenshot beside the write-up on wide screens and a stacked card on a
-// phone; the whole thing is one link.
+// The newest project gets a full-width feature; the rest sit in a two-up
+// grid. Every card is one link, lit from behind in its own accent color.
 
-const tiles: Record<Accent, string> = {
-  blue: 'from-blue-500 to-indigo-600',
-  rose: 'from-rose-500 to-pink-600',
-  amber: 'from-amber-500 to-orange-600',
-  violet: 'from-violet-500 to-purple-600',
-  emerald: 'from-emerald-500 to-teal-600',
+const accents: Record<Accent, string> = {
+  blue: '#3b82f6',
+  rose: '#f43f5e',
+  amber: '#f59e0b',
+  violet: '#8b5cf6',
+  emerald: '#10b981',
 }
 
 type Size = { w: number; h: number }
 const sizes: Record<string, Size & { mobile?: Size }> = previewSizes
 
 const hostname = (url: string) => new URL(url).hostname.replace(/^www\./, '')
+
+const groupLabel = (id: Project['group']) => groups.find((g) => g.id === id)?.label ?? id
 
 // First two letters of the leading word, so names sharing a surname
 // (Shania Mehta / Samara Mehta) don't collapse to the same monogram.
@@ -31,94 +32,129 @@ function formatDate(iso: string) {
 }
 
 export function Projects() {
+  const feature = projects.find((p) => p.url === newestUrl) ?? projects[0]
+  const rest = projects.filter((p) => p !== feature)
+
   return (
-    <div className="flex flex-col gap-14 md:gap-20">
-      {groups.map((group) => {
-        const rows = projects.filter((p) => p.group === group.id)
-        if (rows.length === 0) return null
-        return (
-          <section key={group.id} aria-labelledby={`group-${group.id}`}>
-            <h2
-              id={`group-${group.id}`}
-              className="mb-6 font-mono text-xs tracking-wider text-neutral-500 uppercase md:mb-8"
-            >
-              {group.heading}
-            </h2>
-            <ul className="flex flex-col gap-12 md:gap-16">
-              {rows.map((p) => (
-                <li key={p.url}>
-                  <Row project={p} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      })}
+    <div className="flex flex-col gap-16 md:gap-24">
+      <Feature project={feature} />
+
+      <ul className="grid gap-12 md:grid-cols-2 md:gap-x-10 md:gap-y-16">
+        {rest.map((p) => (
+          <li key={p.url}>
+            <Card project={p} />
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
 
-function Row({ project }: { project: Project }) {
+function Feature({ project }: { project: Project }) {
   const host = hostname(project.url)
-  const image = sizes[host]
   return (
     <a
       href={project.url}
       target="_blank"
       rel="noreferrer"
-      className="group grid gap-5 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-neutral-900 md:grid-cols-[minmax(0,11fr)_minmax(0,9fr)] md:items-center md:gap-10 dark:focus-visible:outline-neutral-100"
+      style={{ '--accent': accents[project.accent] } as CSSProperties}
+      className="group grid gap-8 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-neutral-100 md:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] md:items-center md:gap-14"
     >
-      <Preview project={project} host={host} image={image} />
+      <Preview project={project} host={host} />
 
-      <div className="min-w-0 md:pt-1">
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h3 className="text-2xl font-semibold tracking-tight underline-offset-4 group-hover:underline">{project.name}</h3>
-          {project.url === newestUrl && (
-            <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
-              New
-            </span>
-          )}
-        </div>
-
-        <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-400">{project.description}</p>
-
-        {project.tags && project.tags.length > 0 && (
-          <ul className="mt-4 flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-neutral-500">
-            {project.tags.map((tag) => (
-              <li key={tag}>{tag}</li>
-            ))}
-          </ul>
-        )}
-
-        <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-neutral-500">
-          <span className="text-neutral-900 dark:text-neutral-100">
-            {host}
-            <span aria-hidden="true" className="ml-1 inline-block transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-              ↗
-            </span>
+      <div className="min-w-0">
+        <Meta project={project} host={host} />
+        <h2 className="mt-3 font-display text-4xl leading-none font-semibold tracking-[-0.03em] md:text-5xl">
+          <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_2px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-500 group-hover:bg-[length:100%_2px]">
+            {project.name}
           </span>
-          {project.added && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>{formatDate(project.added)}</span>
-            </>
-          )}
-        </p>
+        </h2>
+        <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-neutral-300">{project.description}</p>
+        <Tags project={project} />
+        <Link host={host} />
       </div>
     </a>
   )
 }
 
-function Preview({ project, host, image }: { project: Project; host: string; image?: Size & { mobile?: Size } }) {
+function Card({ project }: { project: Project }) {
+  const host = hostname(project.url)
   return (
-    <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-      <div className="flex items-center gap-1.5 border-b border-neutral-200 bg-neutral-50 px-3 py-2 dark:border-neutral-800 dark:bg-neutral-800/60">
-        <span className="size-2 rounded-full bg-neutral-300 dark:bg-neutral-600" />
-        <span className="size-2 rounded-full bg-neutral-300 dark:bg-neutral-600" />
-        <span className="size-2 rounded-full bg-neutral-300 dark:bg-neutral-600" />
-        <span className="ml-2 truncate font-mono text-[11px] text-neutral-500">{host}</span>
+    <a
+      href={project.url}
+      target="_blank"
+      rel="noreferrer"
+      style={{ '--accent': accents[project.accent] } as CSSProperties}
+      className="group flex flex-col gap-6 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-neutral-100"
+    >
+      <Preview project={project} host={host} />
+
+      <div className="min-w-0">
+        <Meta project={project} host={host} />
+        <h2 className="mt-2 font-display text-3xl leading-none font-semibold tracking-[-0.03em]">
+          <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_2px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-500 group-hover:bg-[length:100%_2px]">
+            {project.name}
+          </span>
+        </h2>
+        <p className="mt-4 text-[15px] leading-relaxed text-neutral-400">{project.description}</p>
+        <Tags project={project} />
+        <Link host={host} />
       </div>
-      <div className="relative aspect-[4/5] bg-neutral-100 md:aspect-[16/10] dark:bg-neutral-800">
+    </a>
+  )
+}
+
+function Meta({ project, host }: { project: Project; host: string }) {
+  return (
+    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-neutral-500">
+      <span className="uppercase tracking-wider" style={{ color: 'var(--accent)' }}>
+        {groupLabel(project.group)}
+      </span>
+      {project.url === newestUrl && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span className="uppercase tracking-wider text-neutral-300">Newest</span>
+        </>
+      )}
+      {project.added && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span>{formatDate(project.added)}</span>
+        </>
+      )}
+      <span className="sr-only">{host}</span>
+    </p>
+  )
+}
+
+function Tags({ project }: { project: Project }) {
+  if (!project.tags?.length) return null
+  return (
+    <ul className="mt-4 flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-neutral-500">
+      {project.tags.map((tag) => (
+        <li key={tag}>{tag}</li>
+      ))}
+    </ul>
+  )
+}
+
+function Link({ host }: { host: string }) {
+  return (
+    <p className="mt-6 font-mono text-sm text-neutral-100">
+      {host}
+      <span aria-hidden="true" className="ml-1.5 inline-block transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+        ↗
+      </span>
+    </p>
+  )
+}
+
+function Preview({ project, host }: { project: Project; host: string }) {
+  const image = sizes[host]
+  return (
+    <div className="relative">
+      <div aria-hidden="true" className="glow absolute -inset-8 -z-10 rounded-[2rem] blur-2xl md:-inset-12" />
+      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-neutral-900 ring-1 ring-white/10 shadow-2xl shadow-black/60 md:aspect-[16/10]">
         {image ? (
           // Phones get a capture of the site's own phone layout; anything
           // wider gets the desktop capture.
@@ -143,8 +179,8 @@ function Preview({ project, host, image }: { project: Project; host: string; ima
             />
           </picture>
         ) : (
-          <div className={`flex size-full items-center justify-center bg-gradient-to-br ${tiles[project.accent]}`}>
-            <span className="text-5xl font-semibold tracking-tight text-white/90">{monogram(project.name)}</span>
+          <div className="flex size-full items-center justify-center" style={{ background: 'var(--accent)' }}>
+            <span className="font-display text-6xl font-semibold tracking-tight text-white/90">{monogram(project.name)}</span>
           </div>
         )}
       </div>

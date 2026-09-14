@@ -19,15 +19,15 @@ export type Project = {
   added?: string
 }
 
-// Section order on the page, with the heading each one shows.
-export const groups: { id: Group; heading: string }[] = [
-  { id: 'personal', heading: 'For myself, mostly' },
-  { id: 'work', heading: 'Work' },
-  { id: 'family', heading: 'Family portfolios' },
+// Label shown on each card for its group.
+export const groups: { id: Group; label: string }[] = [
+  { id: 'personal', label: 'Personal' },
+  { id: 'work', label: 'Work' },
+  { id: 'family', label: 'Family' },
 ]
 
-// Edit this list to add, remove, or reorder projects. Order within a
-// section follows list order.
+// Edit this list to add, remove, or reorder projects. The most recently
+// added one is featured at the top; the rest follow list order.
 export const projects: Project[] = [
   {
     name: 'ledger',
