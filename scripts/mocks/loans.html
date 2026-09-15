@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Family student loans</title>
     <style>
       /*
@@ -163,6 +164,31 @@
       td .sub2 { display: block; font-size: 11px; color: var(--ink-3); font-weight: 400; margin-top: 2px; }
       .r { text-align: right; font-variant-numeric: tabular-nums; }
       th.r { text-align: right; }
+
+      /* Phone layout for the mobile preview capture. */
+      @media (max-width: 600px) {
+        body { width: auto; padding: 18px 16px 30px; }
+        .head { flex-direction: column; align-items: flex-start; gap: 12px; }
+        h1 { font-size: 20px; }
+        .head p { font-size: 12.5px; }
+        .chip { margin-top: 14px; }
+        .people { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+        .person { padding: 11px 12px; }
+        .person .amt { font-size: 17px; }
+        .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+        .stat { padding: 13px 14px; }
+        .stat .big { font-size: 22px; }
+        .todo { padding: 15px 14px 10px; }
+        .item { flex-wrap: wrap; gap: 8px; }
+        .tag { width: auto; padding: 3px 10px; }
+        .fix { order: 3; }
+        .item .body { flex-basis: 100%; }
+        .kids { grid-template-columns: 1fr; }
+        .kid .amt { font-size: 26px; }
+        .all { padding: 15px 14px 4px; }
+        /* Servicer and rate go; loan, person and balance carry the table. */
+        th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4) { display: none; }
+      }
     </style>
   </head>
   <body>

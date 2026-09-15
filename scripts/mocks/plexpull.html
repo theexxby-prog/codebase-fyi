@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>plexpull — mock</title>
+<style>
+  /*
+    Preview mockup only. plexpull browses a private Plex library behind a login,
+    so this page recreates its look with invented titles and no real artwork.
+  */
+  :root {
+    --bg:#101214; --panel:#1a1d21; --panel2:#22262b; --line:#2b3036;
+    --ink:#f2f1ec; --ink2:#c9c8c2; --muted:#8a8e94; --dim:#5d6167; --accent:#8fc9a0;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; -webkit-font-smoothing:antialiased; }
+  #shell { display:grid; grid-template-columns:232px 1fr; grid-template-rows:auto 1fr; min-height:1500px; }
+  header { grid-column:1/-1; display:flex; align-items:center; gap:18px; padding:14px 28px 10px; }
+  .brand { font-size:16px; font-weight:600; letter-spacing:-.01em; white-space:nowrap; }
+  .brand span { color:var(--muted); font-weight:400; margin-left:8px; }
+  .search { flex:1; max-width:560px; margin:0 auto; position:relative; }
+  .search div { padding:9px 14px 9px 38px; border:1px solid var(--line); border-radius:9px; background:var(--panel); color:var(--dim); font-size:15px; }
+  .search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--dim); }
+  .right { display:flex; align-items:center; gap:10px; }
+  .pill { display:flex; align-items:center; gap:8px; padding:6px 12px 6px 10px; border:1px solid var(--line); border-radius:999px; background:var(--panel); font-size:13px; color:var(--ink2); }
+  .pill i { width:8px; height:8px; border-radius:50%; background:var(--accent); }
+  .iconbtn { width:34px; height:34px; border:1px solid var(--line); border-radius:9px; background:var(--panel); display:grid; place-items:center; color:var(--muted); }
+  .iconbtn svg { width:16px; height:16px; }
+  nav { padding:6px 14px 40px 22px; border-right:1px solid var(--line); }
+  nav .grp { font-size:12px; color:var(--dim); margin:14px 0 6px 10px; }
+  nav div.b { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:8px; color:var(--ink2); font-size:14px; }
+  nav div.b.on { background:var(--panel2); color:var(--ink); }
+  nav div.b svg { width:15px; height:15px; color:var(--muted); flex:none; }
+  nav div.b.on svg { color:var(--accent); }
+  nav div.b .n { margin-left:auto; font-size:12px; color:var(--dim); font-variant-numeric:tabular-nums; }
+  main { padding:6px 28px 40px; }
+  .row { margin:8px 0 26px; }
+  .rh { display:flex; align-items:baseline; gap:14px; margin:0 0 10px; }
+  .rh h2 { margin:0; font-size:16px; font-weight:600; }
+  .rh span { color:var(--muted); font-size:13px; }
+  .strip { display:flex; gap:16px; padding:6px 2px 14px; overflow:hidden; }
+  .card { flex:0 0 150px; }
+  .poster { aspect-ratio:2/3; border-radius:10px; overflow:hidden; position:relative; box-shadow:0 8px 24px -10px rgba(0,0,0,.8); display:flex; align-items:flex-end; padding:12px; }
+  .poster b { font-size:15px; line-height:1.15; letter-spacing:-.01em; text-shadow:0 2px 10px rgba(0,0,0,.6); font-weight:600; }
+  .poster .tag { position:absolute; top:8px; left:8px; padding:2px 7px; border-radius:5px; font-size:11px; font-weight:600; background:rgba(16,18,20,.78); color:var(--ink2); }
+  .poster .rt { position:absolute; right:8px; top:8px; padding:2px 7px; border-radius:5px; font-size:11px; font-weight:600; background:rgba(16,18,20,.78); color:var(--accent); }
+  .t { margin:10px 2px 0; font-size:14px; font-weight:500; line-height:1.3; }
+  .y { margin:2px 2px 0; font-size:12px; color:var(--muted); }
+  /* invented poster art: layered gradients, no real images */
+  .p1 { background:linear-gradient(160deg,#274a5e,#0f1b24 70%), radial-gradient(circle at 70% 20%,#8fc9a0,transparent 40%); }
+  .p2 { background:radial-gradient(circle at 30% 30%,#e8a04a 0,transparent 35%), linear-gradient(200deg,#5b2a3c,#160c12); }
+  .p3 { background:linear-gradient(180deg,#0e2b3a,#050b10), repeating-linear-gradient(90deg,transparent 0 18px,rgba(255,255,255,.04) 18px 19px); }
+  .p4 { background:linear-gradient(160deg,#6b3a2a,#1c0f0a); }
+  .p5 { background:linear-gradient(200deg,#2e3a5c,#0b0e1a 70%), radial-gradient(circle at 50% 80%,#c9c8c2,transparent 45%); }
+  .p6 { background:linear-gradient(160deg,#1f4d3a,#08110d); }
+  .p7 { background:linear-gradient(180deg,#5a4a1f,#171205); }
+  .p8 { background:linear-gradient(160deg,#4a2a5c,#100815 70%), radial-gradient(circle at 20% 15%,#e08b82,transparent 35%); }
+  /* downloads tray */
+  .tray { margin:10px 0 0; background:var(--panel); border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 50px rgba(0,0,0,.6); }
+  .bar { display:flex; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid var(--line); font-size:13px; color:var(--ink2); }
+  .bar b { font-weight:500; color:var(--ink); }
+  .bar .gap { flex:1; }
+  .bar span.btn { color:var(--muted); }
+  .list { padding:4px 16px 8px; }
+  .job { display:grid; grid-template-columns:1fr auto auto; gap:12px; align-items:center; padding:9px 0; border-top:1px solid var(--line); font-size:13px; }
+  .job:first-child { border-top:0; }
+  .job .n { color:var(--ink2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .job .m { color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .job.done .m { color:var(--accent); }
+  .job .a { color:var(--muted); font-size:12px; }
+  .prog { grid-column:1/-1; height:3px; background:var(--line); border-radius:2px; overflow:hidden; margin-top:-3px; }
+  .prog i { display:block; height:100%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
+
+  /* Phone layout for the mobile preview capture. */
+  @media (max-width: 600px) {
+    #shell { grid-template-columns:minmax(0,1fr); min-height:0; }
+    main { min-width:0; }
+    header { flex-wrap:wrap; gap:10px; padding:14px 16px 8px; }
+    .search { flex:1 0 100%; max-width:none; order:3; }
+    .right { margin-left:auto; }
+    .pill span { display:none; }
+    nav { display:none; }
+    main { padding:6px 16px 32px; }
+    .row { margin:8px 0 20px; }
+    .strip { gap:12px; }
+    .card { flex:0 0 118px; }
+    .poster { padding:10px; } .poster b { font-size:13px; }
+    .t { font-size:13px; }
+    .job { grid-template-columns:1fr auto; }
+    .job .a { display:none; }
+  }
+</style>
+</head>
+<body>
+<div id="shell">
+  <header>
+    <div class="brand">plexpull<span>Harbor Media</span></div>
+    <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><div>Search movies and shows</div></div>
+    <div class="right">
+      <div class="pill"><i></i>2 downloading, 6.1 GB left</div>
+      <div class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+      <div class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
+    </div>
+  </header>
+  <nav>
+    <div class="grp">Browse</div>
+    <div class="b on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</div>
+    <div class="b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 10h4M3 14h4M17 10h4M17 14h4"/></svg>Movies</div>
+    <div class="b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 10h4M3 14h4M17 10h4M17 14h4"/></svg>Movies - 4K</div>
+    <div class="b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 21h8M12 18v3"/></svg>TV Shows</div>
+    <div class="b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 21h8M12 18v3"/></svg>TV Shows - 4K</div>
+    <div class="grp">Genres in Movies</div>
+    <div class="b">Drama<span class="n">3,412</span></div>
+    <div class="b">Comedy<span class="n">2,190</span></div>
+    <div class="b">Thriller<span class="n">1,377</span></div>
+    <div class="b">Documentary<span class="n">905</span></div>
+    <div class="b">Animation<span class="n">612</span></div>
+  </nav>
+  <main>
+    <section class="row"><div class="rh"><h2>Recently added</h2><span>See all</span></div>
+      <div class="strip">
+        <div class="card"><div class="poster p1"><span class="tag">Film</span><span class="rt">8.1</span><b>The Lighthouse Keeper's Daughter</b></div><div class="t">The Lighthouse Keeper's Daughter</div><div class="y">2026</div></div>
+        <div class="card"><div class="poster p2"><span class="tag">Series</span><b>Salt &amp; Cedar</b></div><div class="t">Salt &amp; Cedar</div><div class="y">2025</div></div>
+        <div class="card"><div class="poster p3"><span class="tag">4K</span><span class="rt">7.6</span><b>Orbit Decay</b></div><div class="t">Orbit Decay</div><div class="y">2026</div></div>
+        <div class="card"><div class="poster p4"><span class="tag">Film</span><b>Night Ferry</b></div><div class="t">Night Ferry</div><div class="y">2024</div></div>
+        <div class="card"><div class="poster p5"><span class="tag">Series</span><span class="rt">8.8</span><b>Quiet Hours</b></div><div class="t">Quiet Hours</div><div class="y">2026</div></div>
+        <div class="card"><div class="poster p6"><span class="tag">Film</span><b>Greenhouse Effect</b></div><div class="t">Greenhouse Effect</div><div class="y">2025</div></div>
+        <div class="card"><div class="poster p7"><span class="tag">Film</span><span class="rt">7.2</span><b>Amber Season</b></div><div class="t">Amber Season</div><div class="y">2023</div></div>
+      </div>
+    </section>
+    <section class="row"><div class="rh"><h2>Best of the recent films</h2><span>See all</span></div>
+      <div class="strip">
+        <div class="card"><div class="poster p8"><span class="tag">4K</span><span class="rt">9.1</span><b>Paper Moons</b></div><div class="t">Paper Moons</div><div class="y">2026</div></div>
+        <div class="card"><div class="poster p5"><span class="tag">Film</span><span class="rt">8.7</span><b>The Cartographer</b></div><div class="t">The Cartographer</div><div class="y">2025</div></div>
+        <div class="card"><div class="poster p3"><span class="tag">Film</span><span class="rt">8.4</span><b>Low Tide, High Noon</b></div><div class="t">Low Tide, High Noon</div><div class="y">2024</div></div>
+        <div class="card"><div class="poster p1"><span class="tag">4K</span><span class="rt">8.3</span><b>Winter Kitchen</b></div><div class="t">Winter Kitchen</div><div class="y">2026</div></div>
+        <div class="card"><div class="poster p7"><span class="tag">Film</span><span class="rt">8.0</span><b>Second Violin</b></div><div class="t">Second Violin</div><div class="y">2025</div></div>
+        <div class="card"><div class="poster p2"><span class="tag">Film</span><span class="rt">7.9</span><b>Ferris &amp; Sons</b></div><div class="t">Ferris &amp; Sons</div><div class="y">2023</div></div>
+        <div class="card"><div class="poster p6"><span class="tag">Film</span><span class="rt">7.8</span><b>Dry County</b></div><div class="t">Dry County</div><div class="y">2026</div></div>
+      </div>
+    </section>
+    <section class="row"><div class="rh"><h2>Newest series</h2><span>See all</span></div>
+      <div class="strip">
+        <div class="card"><div class="poster p4"><span class="tag">Series</span><b>Harbor Lights</b></div><div class="t">Harbor Lights</div><div class="y">2026</div></div>
+        <div class="card"><div class="poster p8"><span class="tag">Series</span><span class="rt">8.2</span><b>The Understudies</b></div><div class="t">The Understudies</div><div class="y">2026</div></div>
+        <div class="card"><div class="poster p6"><span class="tag">Series</span><b>Field Notes</b></div><div class="t">Field Notes</div><div class="y">2025</div></div>
+        <div class="card"><div class="poster p1"><span class="tag">Series</span><span class="rt">7.7</span><b>Static</b></div><div class="t">Static</div><div class="y">2025</div></div>
+        <div class="card"><div class="poster p3"><span class="tag">Series</span><b>Long Division</b></div><div class="t">Long Division</div><div class="y">2024</div></div>
+        <div class="card"><div class="poster p2"><span class="tag">Series</span><b>Mercer Street</b></div><div class="t">Mercer Street</div><div class="y">2024</div></div>
+        <div class="card"><div class="poster p5"><span class="tag">Series</span><span class="rt">8.5</span><b>Aftertaste</b></div><div class="t">Aftertaste</div><div class="y">2026</div></div>
+      </div>
+    </section>
+    <div class="tray">
+      <div class="bar"><b>Downloads</b><span>2 in progress</span><span>3 queued from the web</span><span class="gap"></span><span class="btn">Clear finished</span><span class="btn">Hide</span></div>
+      <div class="list">
+        <div class="job"><span class="n">Quiet Hours - S01E04 - The Long Way Round.mkv</span><span class="m">62%  38.4 MB/s</span><span class="a">Stop</span><div class="prog"><i style="width:62%"></i></div></div>
+        <div class="job"><span class="n">Orbit Decay (2026) 2160p.mkv</span><span class="m">17%  41.0 MB/s</span><span class="a">Stop</span><div class="prog"><i style="width:17%"></i></div></div>
+        <div class="job"><span class="n">Quiet Hours - S01E03 - Second Wind.mkv</span><span class="m">sent to the Mac</span><span class="a">Stop</span><div class="prog"><i style="width:0%"></i></div></div>
+        <div class="job done"><span class="n">The Lighthouse Keeper's Daughter (2026).mkv</span><span class="m">done, 2 subtitles</span><span class="a">Show in Finder</span></div>
+        <div class="job done"><span class="n">Night Ferry (2024).mkv</span><span class="m">done</span><span class="a">Show in Finder</span></div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

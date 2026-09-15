@@ -1,76 +1,58 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Inter Tight", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
 
 @layer base {
   :root {
-    color-scheme: light;
-  }
-
-  :root:where(.dark) {
     color-scheme: dark;
   }
 
   body {
     margin: 0;
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    /* Lives on body so the fixed background layer paints above it. */
-    background-color: #fafafa;
-  }
-
-  :root:where(.dark) body {
     background-color: #0a0a0a;
+    color: #f5f5f5;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
   }
 }
 
 @layer components {
-  /* Dot grid that fades toward the bottom of the viewport. */
-  .dot-grid {
-    background-image: radial-gradient(currentColor 1px, transparent 1px);
-    background-size: 22px 22px;
-    mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 75%);
+  /* The preview is cropped to its frame and slides down while the card is
+     hovered to show the rest of the page; longer pages take longer. */
+  .preview-img {
+    object-position: 50% 0%;
+    transition: object-position var(--pan, 6s) cubic-bezier(0.33, 0, 0.2, 1);
+  }
+
+  .group:hover .preview-img,
+  .group:focus-visible .preview-img {
+    object-position: 50% 100%;
+  }
+
+  /* Soft accent-colored light behind each screenshot; brighter on hover. */
+  .glow {
+    background: radial-gradient(60% 60% at 50% 60%, var(--accent) 0%, transparent 70%);
+    opacity: 0.28;
+    transition: opacity 0.5s ease;
+  }
+
+  .group:hover .glow,
+  .group:focus-visible .glow {
+    opacity: 0.55;
   }
 
   .reveal {
-    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-
-  /* Screenshot pans up on hover to reveal the rest of the page. Distance and
-     duration come from the image's real proportions, set inline per card. */
-  .preview-scroll {
-    transition: transform var(--preview-duration, 4s) cubic-bezier(0.33, 0, 0.2, 1);
-  }
-
-  .group:hover .preview-scroll,
-  .group:focus-visible .preview-scroll {
-    transform: translateY(calc(-1 * var(--preview-shift, 0%)));
-  }
-
-  /* Cursor-tracked highlight; --mx/--my are set from JS on pointer move. */
-  .spotlight::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    opacity: 0;
-    transition: opacity 0.3s;
-    background: radial-gradient(
-      260px circle at var(--mx, 50%) var(--my, 50%),
-      color-mix(in oklab, var(--accent) 22%, transparent),
-      transparent 70%
-    );
-  }
-
-  .group:hover .spotlight::before {
-    opacity: 1;
+    animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 }
 
-@keyframes fade-up {
+@keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
@@ -78,34 +60,15 @@
   }
 }
 
-@keyframes drift {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(4%, -6%, 0) scale(1.12);
-  }
-}
-
-.blob {
-  animation: drift 18s ease-in-out infinite;
-}
-
-.blob-slow {
-  animation: drift 26s ease-in-out infinite reverse;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .blob,
-  .blob-slow {
-    animation: none;
+  .preview-img,
+  .group:hover .preview-img,
+  .group:focus-visible .preview-img {
+    transition: none;
+    object-position: 50% 0%;
   }
 
-  .preview-scroll,
-  .group:hover .preview-scroll,
-  .group:focus-visible .preview-scroll {
-    transition: none;
-    transform: none;
+  .reveal {
+    animation: none;
   }
 }

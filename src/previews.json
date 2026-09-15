@@ -1,18 +1,50 @@
 {
+  "ledger.codebase.fyi": {
+    "w": 900,
+    "h": 984,
+    "mobile": {
+      "w": 390,
+      "h": 858
+    }
+  },
+  "plexpull.codebase.fyi": {
+    "w": 900,
+    "h": 939,
+    "mobile": {
+      "w": 390,
+      "h": 858
+    }
+  },
   "datamatics.codebase.fyi": {
     "w": 900,
-    "h": 1072
+    "h": 1072,
+    "mobile": {
+      "w": 390,
+      "h": 858
+    }
   },
   "loans.codebase.fyi": {
     "w": 900,
-    "h": 1161
+    "h": 1161,
+    "mobile": {
+      "w": 390,
+      "h": 858
+    }
   },
   "shania.mehtahouse.cc": {
     "w": 900,
-    "h": 2880
+    "h": 2880,
+    "mobile": {
+      "w": 390,
+      "h": 858
+    }
   },
   "samara.mehtahouse.cc": {
     "w": 900,
-    "h": 2880
+    "h": 2880,
+    "mobile": {
+      "w": 390,
+      "h": 858
+    }
   }
 }
