@@ -29,6 +29,19 @@ export const projects: Project[] = [
     mock: 'datamatics.html',
   },
   {
+    name: 'Family student loans',
+    description:
+      "Every federal student loan in the family, with balances, what auto-pays each month, and which servicer still needs chasing. PIN-locked.",
+    url: 'https://loans.codebase.fyi',
+    accent: 'violet',
+    tags: ['Finance', 'Private'],
+    status: 'live',
+    // PIN-gated and full of real balances, so the preview is a mockup built
+    // from invented people and figures.
+    preview: false,
+    mock: 'loans.html',
+  },
+  {
     name: 'Shania Mehta',
     description:
       'Portfolio for an Associate Account Executive at BerlinRosen, covering PR strategy for NYC cities and real estate brands.',

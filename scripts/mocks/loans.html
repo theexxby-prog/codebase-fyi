@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Family student loans</title>
+    <style>
+      /*
+        Preview mockup only. The real app is PIN-locked. Every name, balance,
+        servicer and date below is invented; no account details appear at all.
+      */
+      :root {
+        --navy: #1b3a5f;
+        --navy-2: #16324f;
+        --ink: #10233a;
+        --ink-2: #5a6b7d;
+        --ink-3: #8b98a6;
+        --line: #e3e5e9;
+        --paper: #f6f4f0;
+        --panel: #ffffff;
+        --blue: #2a6fc9;
+        --cream: #fdf8ec;
+        --cream-line: #f0e3c4;
+        --red: #c0392f;
+        --amber: #9a6b00;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        width: 1280px;
+        padding: 30px 40px 44px;
+        background: var(--paper);
+        color: var(--ink);
+        font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .head { display: flex; align-items: flex-start; justify-content: space-between; }
+      h1 { margin: 0; font-size: 27px; font-weight: 680; letter-spacing: -0.5px; color: var(--navy); }
+      .head p { margin: 7px 0 0; color: var(--ink-2); font-size: 13.5px; }
+      .btns { display: flex; gap: 9px; flex: none; }
+      .btn {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 7px;
+        padding: 7px 13px;
+        font-size: 12.5px;
+        color: var(--ink-2);
+      }
+      .btn.primary { color: var(--blue); border-color: #c3d6ee; }
+
+      .chip {
+        display: inline-block;
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 12.5px;
+        font-weight: 550;
+      }
+      .chip s { text-decoration: none; color: var(--ink-3); margin-right: 6px; }
+
+      /* person switcher */
+      .people { margin-top: 16px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+      .person {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 13px 15px;
+      }
+      .person.on { border-color: var(--blue); box-shadow: inset 0 0 0 1px var(--blue); }
+      .person .who { font-size: 13px; font-weight: 600; }
+      .person.on .who { color: var(--blue); }
+      .person .amt { margin-top: 5px; font-size: 19px; font-weight: 650; letter-spacing: -0.4px; }
+      .person .note { margin-top: 4px; font-size: 11px; color: var(--ink-3); }
+      .flag { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red); margin-left: 5px; vertical-align: middle; }
+
+      /* headline figures */
+      .stats { margin-top: 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+      .stat { background: var(--navy); color: #fff; border-radius: 10px; padding: 16px 18px; }
+      .stat .label { font-size: 10.5px; letter-spacing: 0.7px; text-transform: uppercase; color: rgba(255,255,255,0.72); }
+      .stat .big { margin-top: 9px; font-size: 27px; font-weight: 660; letter-spacing: -0.8px; }
+      .stat .big em { font-style: normal; font-size: 14px; color: rgba(255,255,255,0.6); }
+      .stat .sub { margin-top: 6px; font-size: 11.5px; color: rgba(255,255,255,0.66); }
+      .stat.warn .big { color: #ff9b8f; }
+
+      /* work queue */
+      .todo {
+        margin-top: 16px;
+        background: var(--cream);
+        border: 1px solid var(--cream-line);
+        border-radius: 12px;
+        padding: 18px 22px 14px;
+      }
+      .todo-head { display: flex; align-items: center; justify-content: space-between; }
+      .todo-head h2 {
+        margin: 0;
+        font-size: 10.5px;
+        letter-spacing: 0.9px;
+        text-transform: uppercase;
+        color: var(--amber);
+        font-weight: 680;
+      }
+      .count { font-size: 11px; color: var(--amber); background: rgba(154,107,0,0.1); border-radius: 999px; padding: 3px 10px; }
+
+      .item { display: flex; gap: 14px; padding: 15px 0; border-bottom: 1px solid rgba(240,227,196,0.9); }
+      .item:last-of-type { border-bottom: 0; }
+      .tag {
+        flex: none;
+        width: 128px;
+        align-self: flex-start;
+        text-align: center;
+        border-radius: 999px;
+        padding: 3px 0;
+        font-size: 10.5px;
+        font-weight: 620;
+      }
+      .t-urgent { background: rgba(192,57,47,0.12); color: var(--red); }
+      .t-action { background: rgba(154,107,0,0.14); color: var(--amber); }
+      .t-wait { background: rgba(42,111,201,0.12); color: var(--blue); }
+      .item .body { flex: 1; }
+      .item .title { font-size: 13.5px; font-weight: 620; }
+      .item .detail { margin-top: 4px; font-size: 12.5px; color: var(--ink-2); max-width: 900px; }
+      .fix { flex: none; font-size: 12px; color: var(--blue); text-decoration: underline; }
+      .todo-foot { padding-top: 13px; border-top: 1px solid rgba(240,227,196,0.9); font-size: 12px; color: var(--ink-2); }
+
+      /* per-student */
+      .kids { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .kid { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+      .kid-head { display: flex; align-items: center; justify-content: space-between; }
+      .kid-head span {
+        font-size: 10.5px;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 620;
+      }
+      .kid-head a { font-size: 12px; color: var(--blue); text-decoration: underline; }
+      .kid .amt { margin-top: 12px; font-size: 31px; font-weight: 660; letter-spacing: -1px; }
+      .kid .amt em { font-style: normal; font-size: 15px; color: var(--ink-3); }
+      .kid .note { margin-top: 7px; font-size: 12px; color: var(--ink-2); }
+
+      /* every loan, long form */
+      .all { margin-top: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 22px 6px; }
+      .all h2 { margin: 0; font-size: 14px; font-weight: 650; }
+      .all .hint { margin: 3px 0 0; font-size: 12px; color: var(--ink-2); }
+      table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+      th {
+        text-align: left;
+        font-size: 10px;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 640;
+        padding-bottom: 9px;
+        border-bottom: 1px solid var(--line);
+      }
+      td { padding: 12px 0; border-bottom: 1px solid #f1f2f4; font-size: 12.5px; }
+      tr:last-child td { border-bottom: 0; }
+      td.loan { font-weight: 560; }
+      td .sub2 { display: block; font-size: 11px; color: var(--ink-3); font-weight: 400; margin-top: 2px; }
+      .r { text-align: right; font-variant-numeric: tabular-nums; }
+      th.r { text-align: right; }
+    </style>
+  </head>
+  <body>
+    <div class="head">
+      <div>
+        <h1>Family student loans</h1>
+        <p>What each person owes on federal student loans, what gets paid each month, and what needs doing.</p>
+      </div>
+      <div class="btns">
+        <span class="btn primary">Update from studentaid.gov</span>
+        <span class="btn">Lock</span>
+      </div>
+    </div>
+
+    <span class="chip"><s>&rsaquo;</s>New here? How to read this page</span>
+
+    <div class="people">
+      <div class="person on">
+        <div class="who">Family</div>
+        <div class="amt">$98,240</div>
+        <div class="note">Overview of everyone</div>
+      </div>
+      <div class="person">
+        <div class="who">Alex</div>
+        <div class="amt">$14,300</div>
+        <div class="note">$180.00 a month</div>
+      </div>
+      <div class="person">
+        <div class="who">Jamie<span class="flag"></span></div>
+        <div class="amt">$52,410</div>
+        <div class="note">$412.00 a month</div>
+      </div>
+      <div class="person">
+        <div class="who">Riley</div>
+        <div class="amt">$19,870</div>
+        <div class="note">$182.50 a month</div>
+      </div>
+      <div class="person">
+        <div class="who">Morgan</div>
+        <div class="amt">$11,660</div>
+        <div class="note">No payments yet</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="label">Family owes about</div>
+        <div class="big">$98,240.18</div>
+        <div class="sub">Across 11 loans</div>
+      </div>
+      <div class="stat">
+        <div class="label">Paid each month</div>
+        <div class="big">$774.50</div>
+        <div class="sub">By automatic payment</div>
+      </div>
+      <div class="stat warn">
+        <div class="label">Interest added per day</div>
+        <div class="big">$17.42</div>
+        <div class="sub">About $530 a month</div>
+      </div>
+      <div class="stat">
+        <div class="label">Needs doing</div>
+        <div class="big">3</div>
+        <div class="sub">1 urgent, 1 waiting on a servicer</div>
+      </div>
+    </div>
+
+    <section class="todo">
+      <div class="todo-head">
+        <h2>What needs doing</h2>
+        <span class="count">3 items</span>
+      </div>
+
+      <div class="item">
+        <span class="tag t-urgent">Urgent</span>
+        <div class="body">
+          <div class="title">August's payment went to the wrong loan</div>
+          <div class="detail">
+            Jamie's Parent PLUS. Call Northline, ask them to move the $240.00 from the
+            2026-27 loan to the 2024-25 loan, and confirm the 09/28 payment will be split
+            $240.00 and $172.00.
+          </div>
+        </div>
+        <span class="fix">How to fix</span>
+      </div>
+
+      <div class="item">
+        <span class="tag t-action">Action needed</span>
+        <div class="body">
+          <div class="title">The newest loan is missing its interest discount</div>
+          <div class="detail">Jamie's Parent PLUS. Ask Northline to apply the 0.25% auto-debit discount to the 2026-27 loan.</div>
+        </div>
+        <span class="fix">How to fix</span>
+      </div>
+
+      <div class="item">
+        <span class="tag t-wait">Waiting on servicer</span>
+        <div class="body">
+          <div class="title">Asked Northline to put the extra $95.00 toward principal</div>
+          <div class="detail">
+            Alex's Parent PLUS. By 09/22/2026: look for Northline's confirmation email.
+            After the 09/29 payment, check that far more than about $21 went to principal.
+          </div>
+        </div>
+        <span class="fix">How to fix</span>
+      </div>
+
+      <div class="todo-foot">
+        Also on the person pages: 7 smaller questions to ask the servicers and 9 pieces of paperwork still to collect.
+      </div>
+    </section>
+
+    <div class="kids">
+      <div class="kid">
+        <div class="kid-head"><span>For Riley's college</span><a>Open Riley</a></div>
+        <div class="amt">$34,120.55</div>
+        <div class="note">$182.50 a month, paid automatically</div>
+      </div>
+      <div class="kid">
+        <div class="kid-head"><span>For Morgan's college</span><a>Open Morgan</a></div>
+        <div class="amt">$64,119.63</div>
+        <div class="note">No payments yet, first bill due after graduation</div>
+      </div>
+    </div>
+
+    <section class="all">
+      <h2>Every loan</h2>
+      <p class="hint">11 loans across 4 people, newest first</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Loan</th>
+            <th>Person</th>
+            <th>Servicer</th>
+            <th class="r">Rate</th>
+            <th class="r">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="loan">Parent PLUS 2026-27<span class="sub2">Disbursed 08/2026</span></td>
+            <td>Jamie</td><td>Northline</td><td class="r">8.05%</td><td class="r">$21,400.00</td>
+          </tr>
+          <tr>
+            <td class="loan">Direct Unsubsidized 2026-27<span class="sub2">Disbursed 08/2026</span></td>
+            <td>Morgan</td><td>Northline</td><td class="r">6.53%</td><td class="r">$5,500.00</td>
+          </tr>
+          <tr>
+            <td class="loan">Parent PLUS 2025-26<span class="sub2">Disbursed 08/2025</span></td>
+            <td>Jamie</td><td>Northline</td><td class="r">7.54%</td><td class="r">$19,812.40</td>
+          </tr>
+          <tr>
+            <td class="loan">Direct Subsidized 2025-26<span class="sub2">Disbursed 08/2025</span></td>
+            <td>Riley</td><td>Crestview</td><td class="r">5.50%</td><td class="r">$4,120.18</td>
+          </tr>
+          <tr>
+            <td class="loan">Parent PLUS 2024-25<span class="sub2">Disbursed 09/2024</span></td>
+            <td>Alex</td><td>Northline</td><td class="r">9.08%</td><td class="r">$14,300.00</td>
+          </tr>
+          <tr>
+            <td class="loan">Direct Unsubsidized 2024-25<span class="sub2">Disbursed 09/2024</span></td>
+            <td>Riley</td><td>Crestview</td><td class="r">6.53%</td><td class="r">$7,250.00</td>
+          </tr>
+          <tr>
+            <td class="loan">Parent PLUS 2023-24<span class="sub2">Disbursed 08/2023</span></td>
+            <td>Jamie</td><td>Northline</td><td class="r">8.05%</td><td class="r">$11,197.60</td>
+          </tr>
+          <tr>
+            <td class="loan">Direct Subsidized 2023-24<span class="sub2">Disbursed 08/2023</span></td>
+            <td>Riley</td><td>Crestview</td><td class="r">4.99%</td><td class="r">$8,500.00</td>
+          </tr>
+          <tr>
+            <td class="loan">Direct Unsubsidized 2022-23<span class="sub2">Disbursed 08/2022</span></td>
+            <td>Morgan</td><td>Northline</td><td class="r">4.99%</td><td class="r">$6,160.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </body>
+</html>
