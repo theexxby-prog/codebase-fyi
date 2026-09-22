@@ -1,4 +1,4 @@
-import { Projects } from './Projects'
+import { Projects } from './ProjectList'
 import { projects } from './projects'
 
 const newest = projects.reduce<string | undefined>(

@@ -32,6 +32,17 @@
     object-position: 50% 100%;
   }
 
+  /* Posters are already framed, so the hover eases them in a touch instead. */
+  .preview-poster {
+    transform-origin: 60% 50%;
+    transition: transform 5s cubic-bezier(0.2, 0, 0.1, 1);
+  }
+
+  .group:hover .preview-poster,
+  .group:focus-visible .preview-poster {
+    transform: scale(1.05);
+  }
+
   /* Soft accent-colored light behind each screenshot; brighter on hover. */
   .glow {
     background: radial-gradient(60% 60% at 50% 60%, var(--accent) 0%, transparent 70%);
@@ -66,6 +77,13 @@
   .group:focus-visible .preview-img {
     transition: none;
     object-position: 50% 0%;
+  }
+
+  .preview-poster,
+  .group:hover .preview-poster,
+  .group:focus-visible .preview-poster {
+    transition: none;
+    transform: none;
   }
 
   .reveal {

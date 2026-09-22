@@ -35,9 +35,11 @@ const targets = source
     url: block.match(/url:\s*'([^']+)'/)?.[1],
     mock: block.match(/mock:\s*'([^']+)'/)?.[1],
     skip: /preview:\s*false/.test(block),
+    poster: /poster:\s*true/.test(block),
   }))
   // A mock stands in for sites that can't be shot live (private, login-gated).
-  .filter((t) => t.url && (t.mock || !t.skip))
+  // Poster projects have generated art in place of a screenshot; leave it be.
+  .filter((t) => t.url && !t.poster && (t.mock || !t.skip))
   .filter((t) => only.length === 0 || only.includes(new URL(t.url).hostname.replace(/^www\./, '')))
 
 if (targets.length === 0) {

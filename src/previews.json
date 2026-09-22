@@ -1,18 +1,18 @@
 {
   "ledger.codebase.fyi": {
-    "w": 900,
-    "h": 984,
+    "w": 1920,
+    "h": 1200,
     "mobile": {
-      "w": 390,
-      "h": 858
+      "w": 960,
+      "h": 1200
     }
   },
   "plexpull.codebase.fyi": {
-    "w": 900,
-    "h": 939,
+    "w": 1920,
+    "h": 1200,
     "mobile": {
-      "w": 390,
-      "h": 858
+      "w": 960,
+      "h": 1200
     }
   },
   "datamatics.codebase.fyi": {
@@ -24,11 +24,11 @@
     }
   },
   "loans.codebase.fyi": {
-    "w": 900,
-    "h": 1161,
+    "w": 1920,
+    "h": 1200,
     "mobile": {
-      "w": 390,
-      "h": 858
+      "w": 960,
+      "h": 1200
     }
   },
   "shania.mehtahouse.cc": {
@@ -45,6 +45,22 @@
     "mobile": {
       "w": 390,
       "h": 858
+    }
+  },
+  "nfl.codebase.fyi": {
+    "w": 1920,
+    "h": 1200,
+    "mobile": {
+      "w": 960,
+      "h": 1200
+    }
+  },
+  "cricket.codebase.fyi": {
+    "w": 1920,
+    "h": 1200,
+    "mobile": {
+      "w": 960,
+      "h": 1200
     }
   }
 }
