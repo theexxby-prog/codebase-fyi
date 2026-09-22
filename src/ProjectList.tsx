@@ -169,12 +169,14 @@ function Preview({ project, host }: { project: Project; host: string }) {
             )}
             <img
               src={`/previews/${host}.webp`}
-              alt={`Screenshot of ${project.name}`}
+              alt={`${project.poster ? 'Poster for' : 'Screenshot of'} ${project.name}`}
               width={image.w}
               height={image.h}
               loading="lazy"
               decoding="async"
-              className="preview-img size-full object-cover"
+              // A poster has nothing to scroll, so it gets a slow push-in
+              // instead of the screenshot's downward pan.
+              className={`size-full object-cover ${project.poster ? 'preview-poster' : 'preview-img'}`}
               style={{ '--pan': `${Math.min(14, 3 + (image.h / image.w) * 3)}s` } as CSSProperties}
             />
           </picture>
