@@ -19,6 +19,26 @@ export type Project = {
 // the page opens on.
 export const projects: Project[] = [
   {
+    name: 'nfl',
+    description:
+      'The phone build of NFLBar, the macOS menu bar app. Five days of fixtures, kickoff times converted to wherever you are, the network carrying each game and a streaming link per service; it keeps the last board when the signal drops.',
+    url: 'https://nfl.codebase.fyi',
+    accent: 'blue',
+    tags: ['Workers', 'PWA', 'ESPN'],
+    status: 'live',
+    added: '2026-09-20',
+  },
+  {
+    name: 'cricket',
+    description:
+      "India men's T20Is, ODIs and Tests, with start times in your timezone and a Willow link. Fixtures come from CricketData and live scoring from ESPN, because a 100 hits a day cap does not survive polling a Test match.",
+    url: 'https://cricket.codebase.fyi',
+    accent: 'emerald',
+    tags: ['Workers', 'PWA', 'CricketData', 'ESPN'],
+    status: 'live',
+    added: '2026-09-20',
+  },
+  {
     name: 'ledger',
     description:
       'Cards, annual fees, credits and subscriptions in one place, fed by SimpleFIN. Tells you which card to use, which fee is worth it, and what to cancel before it renews.',
@@ -31,6 +51,18 @@ export const projects: Project[] = [
     // with invented cards and figures.
     preview: false,
     mock: 'ledger.html',
+  },
+  {
+    name: 'loans',
+    description:
+      'Family student-loan tracker. Balances tick daily from verified servicer figures, payments are matched from the bank feed through SimpleFIN, and each month the studentaid.gov file reconciles the record.',
+    url: 'https://loans.codebase.fyi',
+    accent: 'rose',
+    tags: ['Workers', 'D1', 'Cron', 'SimpleFIN'],
+    status: 'live',
+    added: '2026-09-14',
+    // Behind a PIN and full of real balances, so it gets a poster instead.
+    preview: false,
   },
   {
     name: 'plexpull',

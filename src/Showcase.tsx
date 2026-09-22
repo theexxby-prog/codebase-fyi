@@ -137,12 +137,12 @@ function Stage({
               {image ? (
                 <img
                   src={`/previews/${host}.webp`}
-                  alt={`Screenshot of ${p.name}`}
+                  alt={image.h > image.w ? `Screenshot of ${p.name}` : `Poster for ${p.name}`}
                   width={image.w}
                   height={image.h}
                   loading={i === 0 ? 'eager' : 'lazy'}
                   decoding="async"
-                  className="stage-img size-full object-cover"
+                  className={`stage-img size-full object-cover ${image.h > image.w ? 'stage-shot' : 'stage-poster'}`}
                   style={{ '--pan': `${Math.min(14, 3 + (image.h / image.w) * 3)}s` } as CSSProperties}
                 />
               ) : (
@@ -219,7 +219,7 @@ function Details({ project }: { project: Project }) {
 function Rail({ index, onSelect, running }: { index: number; onSelect: (i: number) => void; running: boolean }) {
   return (
     <ul
-      className="-mx-1 flex min-h-0 gap-2 overflow-x-auto px-1 pb-1 md:mt-auto md:flex-col md:overflow-visible md:pb-0"
+      className="-mx-1 flex min-h-0 gap-1.5 overflow-x-auto px-1 pb-1 md:mt-auto md:flex-col md:overflow-y-auto md:pb-0"
       role="tablist"
       aria-label="All projects"
     >
@@ -234,14 +234,14 @@ function Rail({ index, onSelect, running }: { index: number; onSelect: (i: numbe
               aria-selected={on}
               onClick={() => onSelect(i)}
               style={{ '--accent': accent.color } as CSSProperties}
-              className={`rail-item relative flex w-44 items-center gap-3 overflow-hidden rounded-xl border px-3 py-2.5 text-left transition md:w-full ${
+              className={`rail-item relative flex w-44 items-center gap-2.5 overflow-hidden rounded-xl border px-3 py-2 text-left transition md:w-full md:py-1.5 ${
                 on
                   ? 'border-neutral-300 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900'
                   : 'border-transparent hover:bg-white/70 dark:hover:bg-neutral-900/60'
               } focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 dark:focus-visible:outline-neutral-100`}
             >
               <span
-                className={`flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${accent.tile} text-xs font-semibold text-white/90`}
+                className={`flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${accent.tile} text-xs font-semibold text-white/90 md:size-7 md:text-[11px]`}
               >
                 {monogram(p.name)}
               </span>
@@ -249,7 +249,8 @@ function Rail({ index, onSelect, running }: { index: number; onSelect: (i: numbe
                 <span className={`block truncate text-sm ${on ? 'font-medium text-neutral-900 dark:text-neutral-100' : 'text-neutral-700 dark:text-neutral-300'}`}>
                   {p.name}
                 </span>
-                <span className="block truncate font-mono text-[11px] text-neutral-500">{hostname(p.url)}</span>
+                {/* The stage header and Open button already show the host, so the rail keeps it for the phone strip only. */}
+                <span className="block truncate font-mono text-[11px] text-neutral-500 md:hidden">{hostname(p.url)}</span>
               </span>
               {on && (
                 <span

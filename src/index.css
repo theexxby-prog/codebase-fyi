@@ -36,16 +36,29 @@
     animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
-  /* The stage screenshot is cropped to the frame and slides down on hover to
-     show the rest of the page; the duration scales with the page's height. */
-  .stage-img {
+  /* Two kinds of stage image. A tall screenshot is cropped to the frame and
+     slides down on hover to show the rest of the page, the duration scaling
+     with its height. A 16:10 poster has nothing to scroll, so it eases in
+     with a slow push-in instead. */
+  .stage-shot {
     object-position: 50% 0%;
     transition: object-position var(--pan, 6s) cubic-bezier(0.33, 0, 0.2, 1);
   }
 
-  .stage:hover .stage-img,
-  .stage:focus-within .stage-img {
+  .stage:hover .stage-shot,
+  .stage:focus-within .stage-shot {
     object-position: 50% 100%;
+  }
+
+  .stage-poster {
+    object-position: 50% 50%;
+    transform-origin: 60% 50%;
+    transition: transform 6s cubic-bezier(0.2, 0, 0.1, 1);
+  }
+
+  .stage:hover .stage-poster,
+  .stage:focus-within .stage-poster {
+    transform: scale(1.06);
   }
 
   /* Autoplay countdown under the active rail item. */
@@ -134,6 +147,7 @@
   .stage:hover .stage-img,
   .stage:focus-within .stage-img {
     transition: none;
+    transform: none;
     object-position: 50% 0%;
   }
 }

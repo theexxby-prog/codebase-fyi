@@ -22,39 +22,52 @@ Edit `src/projects.ts` and add an entry to the `projects` array:
   accent: 'violet',      // blue | rose | amber | violet | emerald
   tags: ['React'],       // optional
   status: 'live',        // optional: 'live' | 'in-progress' | 'archived'
-  preview: false,        // optional: skip the screenshot (private sites)
+  preview: false,        // optional: never screenshot the live site (private)
 }
 ```
 
-Then regenerate the previews (below) so the new project gets one.
+Then give it a stage image (below).
 
-## Screenshot previews
+## Stage images
 
-Each card frames a screenshot of the site that pans down on hover. The images
-live in `public/previews/` and are committed, so a normal build needs nothing
-extra. Regenerate them when a site changes, or after adding a project:
+Each project is shown on the stage as either a poster or a screenshot, one webp
+per host in `public/previews/`. They are committed, so a normal build needs
+nothing extra. Sizes live in `src/previews.json`; a host missing from that
+file falls back to a gradient tile with the project's initials. The card
+tells the two apart by shape: a tall image is a screenshot and pans down on
+hover, a 16:10 image is a poster and gets a slow push-in.
+
+### Posters
+
+nfl, cricket, ledger, loans and plexpull use posters generated with FLUX
+(Black Forest Labs) through the Flux MCP server in Claude Code. The prompts
+follow one recipe so the set reads as a family: a single object that stands
+for the project, lit in the card's accent colour, cinematic photograph,
+shallow depth of field, empty space on the left, no text in the image (the
+card already carries the name and hostname). Generate at 1920x1200 and save
+as webp at quality 82.
+
+| Host | Subject |
+| --- | --- |
+| nfl.codebase.fyi | Football on the yard line under blue floodlights |
+| cricket.codebase.fyi | Red cricket ball on an emerald pitch, stumps behind |
+| ledger.codebase.fyi | Three matte metal cards on slate, violet rim light |
+| loans.codebase.fyi | Mortarboard and tassel on a desk beside a ledger, rose light |
+| plexpull.codebase.fyi | Film projector throwing a teal beam through dust |
+
+### Screenshots
+
+Datamatics, Shania and Samara use real screenshots from
+`scripts/capture-previews.mjs`. Datamatics is login-gated, so it renders the
+mockup in `scripts/mocks/` with invented accounts and figures; never point
+the script at anything showing customer data. The script needs tooling that
+is not part of the build:
 
 ```bash
 npm i -D playwright sharp
 npx playwright install chromium
-npm run capture
+npm run capture -- shania.mehtahouse.cc
 ```
-
-That reads the urls from `src/projects.ts`, writes one webp per host, and
-updates `src/previews.json` with the image sizes the hover animation needs.
-Uninstall `playwright` and `sharp` afterwards to keep deploy builds lean.
-
-### Sites that shouldn't be screenshotted
-
-Never point the capture script at anything behind a login or showing customer
-data. Mark it `preview: false` and it is skipped entirely; the card falls back
-to a gradient tile with the project's initials.
-
-If you still want a visual, add `mock: 'name.html'` alongside it and drop a
-self-contained page in `scripts/mocks/`. The script renders that local file
-instead of the live site, so the preview shows the product with invented
-accounts and figures rather than anyone's real data. `scripts/mocks/datamatics.html`
-is the working example.
 
 ## Deploying
 
