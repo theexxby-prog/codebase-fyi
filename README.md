@@ -94,8 +94,10 @@ so keep that side dark.
 
 ## Deploying
 
-This repo includes `vercel.json`. Push to GitHub and import the repo in Vercel,
-or deploy directly with the Vercel CLI (`vercel --prod`) from this directory.
-Point the `codebase.fyi` domain (registered at Porkbun) at the Vercel project
-via Vercel's domain settings, then update the DNS records at Porkbun (or
-change the domain's nameservers to Vercel's) to match.
+Pushing or merging to `main` is the deploy: Vercel's GitHub integration builds
+and publishes it. Don't run the Vercel CLI (`vercel`, `vercel --prod`) from this
+directory; it bypasses that and can leave production out of step with `main`.
+
+`codebase.fyi` is registered at Porkbun, with DNS on Cloudflare and DNSSEC on.
+The records there point at Vercel. Don't move the nameservers without first
+removing the DS record at Porkbun, or the domain stops resolving.
