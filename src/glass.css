@@ -1,0 +1,337 @@
+/* codebase.fyi glass system, designed by Fable. Shared by codebase-fyi (src/glass.css) and home-codebase-fyi (public/glass.css); keep the two copies identical. */
+
+:root {
+  color-scheme: dark;
+  --bg: #0b0d12;
+  --ink: rgba(255, 255, 255, 0.92);
+  --ink-2: rgba(255, 255, 255, 0.62);
+  --ink-3: rgba(255, 255, 255, 0.42);
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-hi: rgba(255, 255, 255, 0.14);
+  --glass-solid: rgba(22, 25, 34, 0.92);
+  --line: rgba(255, 255, 255, 0.14);
+  --line-2: rgba(255, 255, 255, 0.22);
+  --hl: rgba(255, 255, 255, 0.28);
+  --edge-dark: rgba(0, 0, 0, 0.18);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  --ring: rgba(255, 255, 255, 0.35);
+  --glyph-bg: rgba(255, 255, 255, 0.12);
+  --up: #30d158;
+  --wait: #ffd60a;
+  --down: #ff453a;
+  --blob-1: #3b4bd8;
+  --blob-2: #1fb6c9;
+  --blob-3: #7a3fb3;
+  --blob-4: #d96a3a;
+  --blob-a: 0.38;
+  --tint-mix: 22%;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #eef1f6;
+    --ink: rgba(0, 0, 0, 0.86);
+    --ink-2: rgba(0, 0, 0, 0.55);
+    --ink-3: rgba(0, 0, 0, 0.38);
+    --glass: rgba(255, 255, 255, 0.55);
+    --glass-hi: rgba(255, 255, 255, 0.72);
+    --glass-solid: rgba(255, 255, 255, 0.94);
+    --line: rgba(255, 255, 255, 0.7);
+    --line-2: rgba(255, 255, 255, 0.95);
+    --hl: rgba(255, 255, 255, 0.95);
+    --edge-dark: rgba(20, 30, 60, 0.06);
+    --shadow: 0 12px 32px rgba(20, 30, 60, 0.1), 0 0 0 1px rgba(20, 30, 60, 0.05);
+    --ring: rgba(255, 255, 255, 0.9);
+    --glyph-bg: rgba(255, 255, 255, 0.7);
+    --up: #248a3d;
+    --wait: #b25000;
+    --down: #d70015;
+    --blob-1: #9fc4ff;
+    --blob-2: #a8e6cf;
+    --blob-3: #d9c2ff;
+    --blob-4: #ffd3b6;
+    --blob-a: 0.85;
+    --tint-mix: 16%;
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #eef1f6;
+  --ink: rgba(0, 0, 0, 0.86);
+  --ink-2: rgba(0, 0, 0, 0.55);
+  --ink-3: rgba(0, 0, 0, 0.38);
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-hi: rgba(255, 255, 255, 0.72);
+  --glass-solid: rgba(255, 255, 255, 0.94);
+  --line: rgba(255, 255, 255, 0.7);
+  --line-2: rgba(255, 255, 255, 0.95);
+  --hl: rgba(255, 255, 255, 0.95);
+  --edge-dark: rgba(20, 30, 60, 0.06);
+  --shadow: 0 12px 32px rgba(20, 30, 60, 0.1), 0 0 0 1px rgba(20, 30, 60, 0.05);
+  --ring: rgba(255, 255, 255, 0.9);
+  --glyph-bg: rgba(255, 255, 255, 0.7);
+  --up: #248a3d;
+  --wait: #b25000;
+  --down: #d70015;
+  --blob-1: #9fc4ff;
+  --blob-2: #a8e6cf;
+  --blob-3: #d9c2ff;
+  --blob-4: #ffd3b6;
+  --blob-a: 0.85;
+  --tint-mix: 16%;
+}
+
+/* ---------- base ---------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", ui-sans-serif, "Inter", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.display {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", ui-sans-serif, "Inter Tight", "Inter", system-ui, sans-serif;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+.mono { font-variant-numeric: tabular-nums; }
+
+/* ---------- background: four still colour clouds ---------- */
+
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sky span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: var(--blob-a);
+  will-change: transform;
+  animation: drift 60s ease-in-out infinite alternate;
+}
+
+.sky .b1 { width: 70vw; height: 70vw; left: -22vw; top: -28vw; background: var(--blob-1); }
+.sky .b2 { width: 64vw; height: 64vw; right: -20vw; top: -14vh; background: var(--blob-2); animation-delay: -15s; }
+.sky .b3 { width: 75vw; height: 75vw; left: 10vw; bottom: -40vw; background: var(--blob-3); animation-delay: -30s; }
+.sky .b4 { width: 34vw; height: 34vw; left: 38vw; top: 34vh; background: var(--blob-4); opacity: calc(var(--blob-a) * 0.7); animation-delay: -45s; }
+
+@media (max-width: 700px) {
+  .sky .b1 { width: 130vw; height: 130vw; left: -50vw; top: -55vw; }
+  .sky .b2 { width: 110vw; height: 110vw; right: -60vw; top: 22vh; }
+  .sky .b3 { width: 140vw; height: 140vw; left: -30vw; bottom: -80vw; }
+  .sky .b4 { width: 70vw; height: 70vw; left: 20vw; top: 44vh; }
+}
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(4vw, 3vh, 0); }
+}
+
+/* ---------- glass ---------- */
+
+.glass {
+  position: relative;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow:
+    inset 0 1px 0 var(--hl),
+    inset 0 -1px 0 var(--edge-dark),
+    var(--shadow);
+}
+
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(120% 80% at var(--mx, 20%) var(--my, 0%), rgba(255, 255, 255, 0.22), transparent 55%);
+}
+
+/* ---------- tiles ---------- */
+
+.tile {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 2px;
+  padding: 16px;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1), background 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tile::after {
+  /* the app lights its own glass */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(90% 75% at 14% 8%, color-mix(in srgb, var(--tint) var(--tint-mix), transparent), transparent 62%);
+}
+
+.tile:hover { background: var(--glass-hi); }
+.tile:active { transform: scale(0.97); transition-duration: 120ms; }
+
+.tile > * { position: relative; z-index: 1; }
+
+.glyph {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--glyph-bg);
+  box-shadow: inset 0 1px 0 var(--hl);
+}
+
+.glyph svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--ink);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tile .name {
+  align-self: end;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.tile .fact {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile .fact.alert { color: var(--down); }
+
+.dot {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--up);
+  box-shadow: 0 0 0 1px var(--ring);
+  z-index: 2;
+}
+
+.dot.wait { background: var(--wait); }
+.dot.down {
+  background: var(--down);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 1px var(--ring), 0 0 0 0 rgba(255, 69, 58, 0.5); }
+  50% { box-shadow: 0 0 0 1px var(--ring), 0 0 0 6px rgba(255, 69, 58, 0); }
+}
+
+.dot.text {
+  position: static;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+  margin-top: -2px;
+}
+
+/* ---------- groups ---------- */
+
+.group h2 {
+  margin: 0 0 10px 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* ---------- pills / small glass ---------- */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px 0 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 160ms ease, transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pill:hover { background: var(--glass-hi); }
+.pill:active { transform: scale(0.96); }
+
+.pill svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- entrance ---------- */
+
+.rise {
+  animation: rise 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 25ms);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- fallbacks ---------- */
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: var(--glass-solid); }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky span, .dot.down { animation: none; }
+  .rise { animation: fade 240ms ease both; }
+  .tile, .pill { transition: background 160ms ease; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+}

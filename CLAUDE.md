@@ -1,7 +1,8 @@
 # codebase-fyi
 
-The landing page at codebase.fyi that lists Vishal's apps, one card per app. A Vite +
-React + Tailwind site with no backend.
+The public front door at codebase.fyi: the apps anyone can use, plus a door to the
+family's home screen (home.codebase.fyi, a separate private repo). Plain HTML/CSS built
+with Vite, no framework. Glass design by Fable (2026-09-28).
 
 | | |
 |---|---|
@@ -10,7 +11,7 @@ React + Tailwind site with no backend.
 | Mac folder | ~/dev/codebase-fyi |
 | Deploys by | push or merge to `main` (Vercel's GitHub integration builds it). Never run the `vercel` CLI |
 | Cloudflare | n/a for hosting (no wrangler config). DNS for the domain is on Cloudflare |
-| Read also | README.md (adding a project, previews, posters recipe, deploying) |
+| Read also | README.md (files, adding an app, deploying) |
 
 ## Rules
 - Pull first. Other sessions edit this repo: a cloud session redesigned it on
@@ -25,17 +26,17 @@ React + Tailwind site with no backend.
   back from Vercel.
 - DNS is on Cloudflare with DNSSEC on. Before moving nameservers off Cloudflare, remove
   the DS record at the registrar first, or the domain stops resolving.
-- The card data is `src/projects.ts`. `src/ProjectList.tsx` renders it (the dark project
-  index). When a new app goes live on a codebase.fyi subdomain, it gets a card here.
-- Five apps (nfl, cricket, loans, ledger, plexpull) have `poster: true` and show
-  FLUX-generated posters: a 16:10 desktop webp plus a 4:5 `.mobile` crop in
-  `public/previews/`. Datamatics, Shania and Samara keep screenshots. The recipe is in
-  the README.
-- Never screenshot a site behind a login or showing real data. Use `preview: false`,
-  and a mock page in `scripts/mocks/` if the card needs a visual. Apps that hold private
-  data only get a card if Vishal asks.
-- `playwright` and `sharp` are for `npm run capture` only. Uninstall them afterwards so
-  deploy builds stay lean.
+- The cards are written straight into `index.html` (no data file, no framework), so the
+  page works without JavaScript and link previews see the content.
+- `src/glass.css` must stay identical to `home-codebase-fyi/public/glass.css`.
+- Status dots come from `https://home.codebase.fyi/api/public-status` (up/down only, for
+  apps marked `public: true` in the home repo's `src/apps.js`). If it fails the dots stay
+  neutral; the page never depends on it.
+- Only public apps get a card here. Loans, ledger, medical, house, books, plexpull,
+  pricegap and list live on the family home screen and are never linked or described
+  here.
+- `public/og.png` is a 1200×630 screenshot of the page in dark mode. Retake it after a
+  big visual change.
 - This repo is public. Nothing personal goes in it: no finances, no account ids, no
   secrets.
 
@@ -65,14 +66,10 @@ cloud sessions at claude.ai/code. A cloud session sees only this repo, not the M
    it under "Not deployed yet" so the next Mac session ships it.
 
 ## Current state
-_Updated 2026-09-24 from the Mac (housekeeping session: added this handoff setup)._
-- **Live:** the 2026-09-21 build (posters for the five apps, nfl and cricket cards). The
-  live `assets/index-BQde0hR5.js` matches a local build of `main`. Eight cards: nfl
-  (featured as newest), cricket, loans, ledger, plexpull, Datamatics, Shania, Samara.
+_Updated 2026-09-28 from the Mac._
+- **Live:** the glass redesign (Two Front Doors, designed by Fable, built by Claude Code).
+  Public cards: NFL, Cricket, Marker, Datamatics portal, Shania, Samara, NFLBar, plus the
+  Family door to home.codebase.fyi. The old React/Tailwind site, posters, screenshots and
+  capture scripts were removed (they're in git history).
 - **Not deployed yet:** nothing.
-- **Open / next:**
-  - books.codebase.fyi went live 2026-09-23 and has no card yet. Ask Vishal whether to
-    add one (it is PIN-gated, so it would need a poster or a mock, not a screenshot).
-  - The Samara card is tagged `React`, but that site is a single static `index.html`.
-  - The Datamatics card links to datamatics.codebase.fyi. The portal is also served at
-    datamatics.mehtahouse.cc. Both answer; confirm which one Vishal wants on the card.
+- **Open / next:** check it on a real iPhone (glass performance, light/dark).
