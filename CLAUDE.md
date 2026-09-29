@@ -1,7 +1,7 @@
 # codebase-fyi
 
 The public front door at codebase.fyi: the apps anyone can use, plus a door to the
-family's home screen (home.codebase.fyi, a separate private repo). Plain HTML/CSS built
+family's home screen (list.codebase.fyi, a separate private repo). Plain HTML/CSS built
 with Vite, no framework. Glass design by Fable (2026-09-28).
 
 | | |
@@ -28,9 +28,9 @@ with Vite, no framework. Glass design by Fable (2026-09-28).
   the DS record at the registrar first, or the domain stops resolving.
 - The cards are written straight into `index.html` (no data file, no framework), so the
   page works without JavaScript and link previews see the content.
-- `src/glass.css` must stay identical to `home-codebase-fyi/public/glass.css`.
-- Status dots come from `https://home.codebase.fyi/api/public-status` (up/down only, for
-  apps marked `public: true` in the home repo's `src/apps.js`). If it fails the dots stay
+- `src/glass.css` must stay identical to `list.codebase.fyi/public/glass.css`.
+- Status dots come from `https://list.codebase.fyi/api/public-status` (up/down only, for
+  apps marked `public: true` in the list repo's `src/apps.js`). If it fails the dots stay
   neutral; the page never depends on it.
 - Only public apps get a card here. Loans, ledger, medical, house, books, plexpull,
   pricegap and list live on the family home screen and are never linked or described
@@ -69,7 +69,7 @@ cloud sessions at claude.ai/code. A cloud session sees only this repo, not the M
 _Updated 2026-09-28 from the Mac._
 - **Live:** the glass redesign (Two Front Doors, designed by Fable, built by Claude Code).
   Public cards: NFL, Cricket, Marker, Datamatics portal, Shania, Samara, NFLBar, plus the
-  Family door to home.codebase.fyi. The old React/Tailwind site, posters, screenshots and
+  Family door to list.codebase.fyi. The old React/Tailwind site, posters, screenshots and
   capture scripts were removed (they're in git history).
 - **Not deployed yet:** nothing.
 - **Open / next:** check it on a real iPhone (glass performance, light/dark).
