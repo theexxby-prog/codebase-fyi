@@ -1,6 +1,6 @@
 // codebase.fyi: styles, the entrance stagger, the pointer sheen on desktop,
 // and live status dots for the public apps. The dots come from
-// list.codebase.fyi/api/public-status, which only ever says up or down for
+// home.codebase.fyi/api/public-status, which only ever says up or down for
 // the apps shown here. If it can't be reached the dots just stay neutral.
 
 import "./glass.css";
@@ -8,7 +8,7 @@ import "./site.css";
 
 document.querySelectorAll(".rise").forEach((el, i) => el.style.setProperty("--i", i));
 
-fetch("https://list.codebase.fyi/api/public-status")
+fetch("https://home.codebase.fyi/api/public-status")
   .then((r) => (r.ok ? r.json() : null))
   .then((data) => {
     if (!data) return;
