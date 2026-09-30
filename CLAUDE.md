@@ -2,7 +2,8 @@
 
 The public front door at codebase.fyi: the apps anyone can use, plus a door to the
 family's home screen (home.codebase.fyi, a separate private repo). Plain HTML/CSS built
-with Vite, no framework. Glass design by Fable (2026-09-28).
+with Vite, no framework. Designed by Fable: the glass (2026-09-28) and the three looks
+(2026-09-29).
 
 | | |
 |---|---|
@@ -29,6 +30,32 @@ with Vite, no framework. Glass design by Fable (2026-09-28).
 - The cards are written straight into `index.html` (no data file, no framework), so the
   page works without JavaScript and link previews see the content.
 - `src/glass.css` must stay identical to `home-codebase-fyi/public/glass.css`.
+- **Three looks, one page.** `<html data-look="ink|emblem|postcards">` picks the look;
+  `src/look-*.css` hold each look's colours, card surfaces and grid spans, scoped under
+  `[data-look="…"]`. `src/site.css` is the layout they share. Markup, copy, links and
+  status dots are written once in `index.html`; every card carries its three drawings
+  (`.ink`, `.em`, `.stamp`, inline SVG) and the look's CSS shows one.
+  - Default is **emblem**. The head script in `index.html` sets the look before first
+    paint: `?look=` for that visit (not saved), else the choice saved in
+    `localStorage.look`, else emblem. The footer's "Look" control saves the choice.
+  - Ink and postcards override the colour tokens (`--bg`, `--ink`…) and follow the same
+    theme rule as glass.css (dark by default, light on `prefers-color-scheme: light`
+    unless `data-theme=dark`, light on `data-theme=light`). Don't change how the theme
+    is chosen here.
+  - The grid is one 8-card `.grid.board`; it must be a full rectangle in every look at
+    both widths. Emblem's spans are set per `data-app` (phone: NFL, Cricket, NFLBar and
+    Home span 2; desktop: NFL and Cricket span 2, Home spans 3). Adding or removing a card
+    means re-balancing those spans.
+  - Emblem's "next game" chips from the mockup are left out until there is real data.
+  - Check every look with the symmetry tool:
+    `node ~/dev/design-codebase-fyi/tools/symmetry-check.mjs http://localhost:4173/?look=ink`
+    (and emblem, postcards) against `npm run build && npx vite preview --port 4173`.
+  - **To retire a look later:** delete its `src/look-*.css` and its import in
+    `src/main.js`, remove its button from the footer `.look` group, drop its SVG from each
+    card (`.ink` for ink, `.em` for emblem, `.stamp` plus `.mark` for postcards; the
+    `#postmark` symbol and `.seal` go with postcards, `.sig` with ink), and remove its name
+    from the `looks` list in the head script. If only one look is left, remove the footer
+    control and the head script's look branch, and hard-code `data-look` on `<html>`.
 - Status dots come from `https://home.codebase.fyi/api/public-status` (up/down only, for
   apps marked `public: true` in the home repo's `src/apps.js`). If it fails the dots stay
   neutral; the page never depends on it.
@@ -66,12 +93,19 @@ cloud sessions at claude.ai/code. A cloud session sees only this repo, not the M
    it under "Not deployed yet" so the next Mac session ships it.
 
 ## Current state
-_Updated 2026-09-29 from the Mac._
-- **Live:** the glass redesign (Two Front Doors, designed by Fable, built by Claude Code).
-  Public cards: NFL, Cricket, Marker, Datamatics portal, Shania, Samara, NFLBar, plus the
-  Family door to home.codebase.fyi. The old React/Tailwind site, posters, screenshots and
-  capture scripts were removed (they're in git history).
-- 2026-09-29: the Family door briefly pointed at list.codebase.fyi (a misread merge); it's
-  back on home.codebase.fyi, which is the family's PIN home screen again.
-- **Not deployed yet:** nothing.
-- **Open / next:** check it on a real iPhone (glass performance, light/dark).
+_Updated 2026-09-29 from the Mac (Fable session)._
+- **Live (main):** the glass redesign (Two Front Doors). Public cards: NFL, Cricket,
+  Marker, Datamatics portal, Shania, Samara, NFLBar, plus the Family door.
+- **Branch `front-three-looks`, preview only, not live:** the front page rebuilt as one
+  8-card grid with three switchable looks (Ink shelf, Emblem board, Postcards), default
+  emblem, footer "Look" switch saved in localStorage. Also: the group is an eyebrow inside
+  each card, Shania and Samara have different drawings, the family door is a "Home" card,
+  the card says "Datamatics" (not "Datamatics portal"), the footer lost the "Cloudflare
+  Workers, Vercel" span. Symmetry checker passes for all three looks at 390 and 1440.
+  Vercel builds a preview for the branch; Vishal wants to toggle between the looks for a
+  few days before choosing.
+- **Not deployed yet:** the branch above (merge to `main` when Vishal says so). After it
+  goes live, retake `public/og.png` in the chosen look.
+- **Open / next:** pick one look and retire the other two (steps under Rules), or keep
+  all three; check on a real iPhone. The remote branch `claude/webpage-styling-issues-rgssn3`
+  (2026-09-14) is stale, nothing ahead of main.

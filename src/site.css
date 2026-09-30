@@ -1,4 +1,6 @@
-/* codebase.fyi page layout, from Fable's public.html mockup. The glass system itself is glass.css. */
+/* codebase.fyi page layout shared by the three looks (ink, emblem, postcards). Each look's own file
+   sets colours, card surfaces and grid spans under html[data-look="…"]. Tokens (--bg, --ink…) come
+   from glass.css; ink and postcards override them in their files. */
 
 .page {
   max-width: 1120px;
@@ -21,93 +23,127 @@ nav {
 }
 .wordmark b { color: var(--ink); }
 
-.hero { padding: 40px 4px 30px; max-width: 640px; }
+/* hero: text left; the postcards seal sits on the right and is hidden in the other looks */
+.hero {
+  padding: 36px 4px 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0;
+  align-items: center;
+}
 .hero h1 { margin: 0; font-size: 40px; line-height: 1; }
 .hero p { margin: 14px 0 0; font-size: 17px; line-height: 1.45; color: var(--ink-2); max-width: 30em; }
+.hero .sig { display: none; align-items: center; gap: 10px; margin-top: 12px; font-size: 13px; color: var(--ink-3); }
+.hero .sig i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--gold, #d69a2a); }
+.seal { display: none; width: 84px; height: 84px; color: var(--ink-3); }
+.seal text { font: 600 9.5px -apple-system, BlinkMacSystemFont, system-ui, sans-serif; letter-spacing: 0.14em; fill: currentColor; }
+.seal .seal-mon, .seal .seal-day { font-size: 12px; letter-spacing: 0.02em; }
 
-.groups { display: flex; flex-direction: column; gap: 22px; }
-.tiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+/* the one grid of eight; each look sets its columns and spans */
+.board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 
-/* public card: a tile with a blurb */
+/* one card: art on top, text below (postcards puts the art to the right) */
 .card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+.card > * { min-width: 0; }
+.art { display: grid; }
+.art svg { display: none; }
+.text {
+  display: grid;
   grid-template-rows: auto auto 1fr auto;
   gap: 0;
-  padding: 18px 18px 16px;
-  min-height: 144px;
+  align-content: start;
 }
-.card .top { display: flex; align-items: center; gap: 12px; }
-.card .name { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
-.card .blurb { margin: 12px 0 14px; font-size: 14px; line-height: 1.45; color: var(--ink-2); }
-.card .foot {
+.brand { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.name {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  font-size: 12.5px;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.blurb { margin: 8px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--ink-2); align-self: start; }
+.host {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  font-size: 12px;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
-.card .foot .host { display: inline-flex; align-items: center; gap: 7px; }
-.card .foot .host .dot { position: static; }
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 22px;
-  padding: 0 9px;
-  border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--ink-2);
-  background: var(--glyph-bg);
-  box-shadow: inset 0 1px 0 var(--hl);
-}
-.badge .dot { position: static; }
-.card .foot svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.host span { overflow: hidden; text-overflow: ellipsis; }
+.mark { display: none; }
 
-/* the door to the family screen */
-.door {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 16px 16px 20px;
-  min-height: 144px;
-  --tint: #94a3b8;
-}
-.door .glyph { margin-bottom: 8px; }
-.door h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
-.door p { margin: 6px 0 0; font-size: 14px; line-height: 1.45; color: var(--ink-2); max-width: 26em; }
-.door .go {
-  width: 44px; height: 44px; border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--ink); color: var(--bg);
-  box-shadow: 0 6px 16px rgba(0,0,0,.18);
-}
-.door .go svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+/* status dots: glass.css positions them for tiles; here they sit in the text */
+.card .dot { position: static; width: 7px; height: 7px; flex: none; }
+.dot.none { background: var(--ink-3); box-shadow: none; }
 
+/* footer: the colophon on one line, the look switch on its own line on the phone */
 footer {
-  margin-top: 40px;
+  margin-top: 36px;
   padding: 0 4px;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 18px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 18px;
   font-size: 12.5px;
   color: var(--ink-3);
 }
+footer .colophon { display: flex; align-items: center; gap: 18px; white-space: nowrap; }
+footer .colophon a { color: var(--ink-2); }
+
+/* the look switch: a small segmented control */
+.look {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--seg-bg);
+  border: 1px solid var(--seg-line);
+  box-shadow: var(--seg-shadow, none);
+}
+.look-label { padding: 0 8px 0 10px; font-size: 12px; font-weight: 500; color: var(--ink-3); }
+.look .opt {
+  height: 26px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 26px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease;
+}
+.look .opt:hover { color: var(--ink); }
+.look .opt[aria-pressed="true"] { background: var(--seg-on); color: var(--ink); box-shadow: var(--seg-on-shadow, none); }
+.look .opt:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 
 @media (min-width: 900px) {
   .page { padding-top: 22px; }
   .hero { padding: 32px 4px 30px; }
   .hero h1 { font-size: 56px; }
   .hero p { font-size: 19px; margin-top: 18px; }
-
-  .groups {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px 20px;
-  }
-  .group { grid-column: span var(--n); }
-  .tiles { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
-  .group.door-group { grid-column: span 2; }
+  .board { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  .blurb { font-size: 14px; }
+  footer { margin-top: 40px; }
 }

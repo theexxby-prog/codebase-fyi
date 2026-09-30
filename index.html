@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-look="emblem">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -19,9 +19,15 @@
 <meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
 <script>
+  // Theme (unchanged) and the look, both decided before first paint.
+  // Look: ?look= wins for this visit, then the saved choice, then emblem.
   (function () {
-    var t = new URLSearchParams(location.search).get('theme');
-    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    var d = document.documentElement, q = new URLSearchParams(location.search);
+    var t = q.get('theme');
+    if (t === 'light' || t === 'dark') d.dataset.theme = t;
+    var looks = ['ink', 'emblem', 'postcards'], l = q.get('look');
+    if (looks.indexOf(l) < 0) { try { l = localStorage.getItem('look'); } catch (e) { l = null; } }
+    d.dataset.look = looks.indexOf(l) < 0 ? 'emblem' : l;
   })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,116 +38,238 @@
 <body>
 <div class="sky" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span><span class="b4"></span></div>
 
-<!-- Lucide icons (ISC licence) plus football, cricket and chip drawn in the same style -->
+<!-- Shared symbols: the lock (Lucide, ISC licence) and the postcards' postmark -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
-  <symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
-  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
-  <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
-  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
-  <symbol id="i-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
-  <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
-  <symbol id="i-football" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10.5" ry="6.5" transform="rotate(-42 12 12)"/><path d="M8.8 15.2 15.2 8.8"/><path d="M10.4 12.4l1.2 1.2"/><path d="M12.4 10.4l1.2 1.2"/></symbol>
-  <symbol id="i-cricket" viewBox="0 0 24 24"><path d="M7 21V9"/><path d="M12 21V9"/><path d="M17 21V9"/><path d="M6 8h5.2"/><path d="M12.8 8H18"/><circle cx="12" cy="4" r="1.8"/></symbol>
-  <symbol id="i-chip" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4.5"/><path d="M12 2v5.5"/><path d="M12 16.5V22"/><path d="M2 12h5.5"/><path d="M16.5 12H22"/></symbol>
+  <symbol id="postmark" viewBox="0 0 44 44"><circle cx="26" cy="22" r="14" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="26" cy="22" r="3" fill="var(--st)"/><path d="M2 17c3-2 5 2 8 0M2 22c3-2 5 2 8 0M2 27c3-2 5 2 8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
 </svg>
 
 <main class="page">
   <nav>
     <a class="wordmark" href="/"><b>codebase</b>.fyi</a>
-    <a class="pill glass" href="https://home.codebase.fyi"><svg><use href="#i-lock"/></svg>Family</a>
+    <a class="pill" href="https://home.codebase.fyi"><svg><use href="#i-lock"/></svg>Family</a>
   </nav>
 
   <header class="hero">
-    <h1 class="display rise">Vishal Mehta</h1>
-    <p class="rise">Small apps I build on the side, mostly for the people I live with. A few are open to anyone.</p>
+    <div class="hero-text">
+      <h1 class="display rise">Vishal Mehta</h1>
+      <p class="rise">Small apps I build on the side, mostly for the people I live with. A few are open to anyone.</p>
+      <span class="sig rise"><i></i>Eight things, drawn in ink. The gold is the good part.</span>
+    </div>
+    <!-- postcards only: the seal; the date is filled in by main.js -->
+    <svg class="seal" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1"/>
+      <defs><path id="seal-ring" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0"/></defs>
+      <text><textPath href="#seal-ring" startOffset="2%">CODEBASE.FYI · NEW YORK · SINCE 2026 ·</textPath></text>
+      <text class="seal-mon" x="50" y="47" text-anchor="middle">SEP</text>
+      <text class="seal-day" x="50" y="61" text-anchor="middle">29</text>
+    </svg>
   </header>
 
-  <div class="groups">
+  <!--
+    One grid of eight. Each card carries three drawings (ink, emblem, stamp); the look's CSS shows
+    one. Copy, links and status live once, in .text. data-id is the status key on home's
+    /api/public-status; data-app drives the emblem board's spans.
+  -->
+  <div class="grid board">
 
-    <section class="group" style="--n:2">
-      <h2>Sports</h2>
-      <div class="tiles">
-        <a class="tile card glass rise" href="https://nfl.codebase.fyi" style="--tint:#3b82f6" data-id="nfl">
-          <div class="top"><span class="glyph"><svg><use href="#i-football"/></svg></span><span class="name">NFL</span></div>
-          <p class="blurb">This week's games, kickoff times where you are, and where each one is streaming.</p>
-          <div class="foot"><span class="host"><i class="dot wait"></i>nfl.codebase.fyi</span><svg><use href="#i-arrow"/></svg></div>
-        </a>
-        <a class="tile card glass rise" href="https://cricket.codebase.fyi" style="--tint:#22c55e" data-id="cricket">
-          <div class="top"><span class="glyph"><svg><use href="#i-cricket"/></svg></span><span class="name">Cricket</span></div>
-          <p class="blurb">India's men's matches with live scores and a bell when play starts.</p>
-          <div class="foot"><span class="host"><i class="dot wait"></i>cricket.codebase.fyi</span><svg><use href="#i-arrow"/></svg></div>
-        </a>
+    <a class="card rise" href="https://nfl.codebase.fyi" style="--tint:#3b82f6" data-id="nfl" data-app="nfl">
+      <span class="art" aria-hidden="true">
+        <svg class="ink" viewBox="0 0 160 120">
+          <path d="M14 100H146" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity=".5"/>
+          <path d="M104 100V54" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M86 54h36M86 54V16M122 54V16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M18 92C30 66 40 54 52 48" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-dasharray="3 5" opacity=".6"/>
+          <g transform="rotate(-32 68 40)">
+            <ellipse class="y" cx="68" cy="40" rx="18" ry="10.5" stroke="currentColor" stroke-width="2.5"/>
+            <path d="M60 40h16M63.5 37v6M68 37v6M72.5 37v6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+          </g>
+        </svg>
+        <svg class="em" viewBox="0 0 100 100"><g transform="rotate(-35 50 50)"><ellipse class="f" cx="50" cy="50" rx="46" ry="27"/><path class="s" d="M30 50h40M38 44v12M46 44v12M54 44v12M62 44v12"/><path class="s" d="M12 42c-2 5-2 11 0 16M88 42c2 5 2 11 0 16" style="stroke-width:4;opacity:.6"/></g></svg>
+        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><g transform="rotate(-32 28 30)"><ellipse class="m" cx="28" cy="30" rx="15" ry="9"/><path class="m" d="M21 30h14M24.5 27.5v5M28 27.5v5M31.5 27.5v5" style="stroke-width:1.5"/></g><text class="val" x="40" y="62">01</text></svg>
+      </span>
+      <div class="text">
+        <div class="brand">Sports</div>
+        <div class="name">NFL<i class="dot wait"></i></div>
+        <p class="blurb">This week's games, kickoff times where you are, and where each one is streaming.</p>
+        <div class="host"><i class="dot wait"></i><span>nfl.codebase.fyi</span></div>
       </div>
-    </section>
+      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
+    </a>
 
-    <section class="group" style="--n:1">
-      <h2>Games</h2>
-      <div class="tiles">
-        <a class="tile card glass rise" href="https://marker.codebase.fyi" style="--tint:#e11d48" data-id="marker">
-          <div class="top"><span class="glyph"><svg><use href="#i-chip"/></svg></span><span class="name">Marker</span></div>
-          <p class="blurb">Chip ledger for a home poker game. Settles everyone up at close.</p>
-          <div class="foot"><span class="host"><i class="dot wait"></i>marker.codebase.fyi</span><svg><use href="#i-arrow"/></svg></div>
-        </a>
+    <a class="card rise" href="https://cricket.codebase.fyi" style="--tint:#22c55e" data-id="cricket" data-app="cricket">
+      <span class="art" aria-hidden="true">
+        <svg class="ink" viewBox="0 0 160 120">
+          <path d="M14 100H146" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity=".5"/>
+          <path d="M78 100V44M90 100V44M102 100V44" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M74 41h14M92 41h14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M14 86C22 76 28 71 34 68" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-dasharray="3 5" opacity=".6"/>
+          <circle class="y" cx="42" cy="64" r="7.5" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M38 59l7 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M118 100L136 58" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M136 58l4-10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+        <svg class="em" viewBox="0 0 100 100"><circle class="f" cx="50" cy="50" r="46"/><path class="s" d="M28 14c-14 20-14 52 0 72M72 14c14 20 14 52 0 72" style="stroke-width:4"/><path class="s" d="M22 28l6 3M20 40l6 2M20 52l6 1M22 64l6 0M26 76l6-2M78 28l-6 3M80 40l-6 2M80 52l-6 1M78 64l-6 0M74 76l-6-2" style="stroke-width:3.5"/></svg>
+        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><path class="m" d="M24 46V20M31 46V20M38 46V20M21 18h9M32 18h9"/><circle class="m" cx="14" cy="30" r="3.5"/><text class="val" x="40" y="62">02</text></svg>
+      </span>
+      <div class="text">
+        <div class="brand">Sports</div>
+        <div class="name">Cricket<i class="dot wait"></i></div>
+        <p class="blurb">India's men's matches with live scores and a bell when play starts.</p>
+        <div class="host"><i class="dot wait"></i><span>cricket.codebase.fyi</span></div>
       </div>
-    </section>
+      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
+    </a>
 
-    <section class="group" style="--n:1">
-      <h2>Work</h2>
-      <div class="tiles">
-        <a class="tile card glass rise" href="https://datamatics.mehtahouse.cc" style="--tint:#0ea5e9" data-id="datamatics">
-          <div class="top"><span class="glyph"><svg><use href="#i-briefcase"/></svg></span><span class="name">Datamatics portal</span></div>
-          <p class="blurb">Client portal for a B2B lead-generation business.</p>
-          <div class="foot"><span class="host"><i class="dot wait"></i>datamatics.mehtahouse.cc</span><svg><use href="#i-arrow"/></svg></div>
-        </a>
+    <a class="card rise" href="https://marker.codebase.fyi" style="--tint:#e11d48" data-id="marker" data-app="marker">
+      <span class="art" aria-hidden="true">
+        <svg class="ink" viewBox="0 0 160 120">
+          <path d="M14 100H146" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity=".5"/>
+          <rect class="paper" x="46" y="88" width="60" height="12" rx="6" stroke="currentColor" stroke-width="2.5"/>
+          <rect class="paper" x="46" y="76" width="60" height="12" rx="6" stroke="currentColor" stroke-width="2.5"/>
+          <rect class="paper" x="46" y="64" width="60" height="12" rx="6" stroke="currentColor" stroke-width="2.5"/>
+          <ellipse class="y" cx="76" cy="64" rx="30" ry="8" stroke="currentColor" stroke-width="2.5"/>
+          <ellipse cx="76" cy="64" rx="13" ry="3.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M54 82h6M92 82h6M54 94h6M92 94h6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+          <ellipse class="paper" cx="128" cy="96" rx="14" ry="4" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+        <svg class="em" viewBox="0 0 100 100"><circle class="f" cx="50" cy="50" r="46"/><circle class="s" cx="50" cy="50" r="38" style="stroke-width:9;stroke-dasharray:15 15;stroke-linecap:butt"/><circle class="s" cx="50" cy="50" r="20" style="stroke-width:4"/></svg>
+        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><circle class="m" cx="28" cy="31" r="14"/><circle class="m" cx="28" cy="31" r="9" style="stroke-dasharray:4 4;stroke-width:3"/><circle class="m2" cx="28" cy="31" r="2.5"/><text class="val" x="40" y="62">03</text></svg>
+      </span>
+      <div class="text">
+        <div class="brand">Games</div>
+        <div class="name">Marker<i class="dot wait"></i></div>
+        <p class="blurb">Chip ledger for a home poker game. Settles everyone up at close.</p>
+        <div class="host"><i class="dot wait"></i><span>marker.codebase.fyi</span></div>
       </div>
-    </section>
+      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
+    </a>
 
-    <section class="group" style="--n:2">
-      <h2>Made for</h2>
-      <div class="tiles">
-        <a class="tile card glass rise" href="https://shania.mehtahouse.cc" style="--tint:#f43f5e" data-id="shania">
-          <div class="top"><span class="glyph"><svg><use href="#i-user"/></svg></span><span class="name">Shania</span></div>
-          <p class="blurb">Portfolio for a PR strategist in New York.</p>
-          <div class="foot"><span class="host"><i class="dot wait"></i>shania.mehtahouse.cc</span><svg><use href="#i-arrow"/></svg></div>
-        </a>
-        <a class="tile card glass rise" href="https://samara.mehtahouse.cc" style="--tint:#f59e0b" data-id="samara">
-          <div class="top"><span class="glyph"><svg><use href="#i-user"/></svg></span><span class="name">Samara</span></div>
-          <p class="blurb">Portfolio for a hospitality professional and kinesiology student.</p>
-          <div class="foot"><span class="host"><i class="dot wait"></i>samara.mehtahouse.cc</span><svg><use href="#i-arrow"/></svg></div>
-        </a>
+    <a class="card rise" href="https://datamatics.mehtahouse.cc" style="--tint:#0ea5e9" data-id="datamatics" data-app="datamatics">
+      <span class="art" aria-hidden="true">
+        <svg class="ink" viewBox="0 0 160 120">
+          <path d="M14 100H146" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity=".5"/>
+          <path d="M66 40V32a6 6 0 0 1 6-6h16a6 6 0 0 1 6 6v8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <rect class="paper" x="30" y="40" width="100" height="58" rx="8" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M30 62h100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <rect class="y" x="72" y="57" width="16" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <svg class="em" viewBox="0 0 100 100"><rect class="f" x="6" y="28" width="88" height="62" rx="10"/><path class="s" d="M34 28v-8a6 6 0 0 1 6-6h20a6 6 0 0 1 6 6v8"/><path class="s" d="M6 54h88" style="stroke-width:4"/><rect class="h" x="42" y="49" width="16" height="11" rx="2"/></svg>
+        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><rect class="m" x="11" y="24" width="34" height="22" rx="3"/><path class="m" d="M22 24v-3a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v3M11 33h34"/><rect class="m2" x="25" y="31" width="6" height="4" rx="1"/><text class="val" x="40" y="62">04</text></svg>
+      </span>
+      <div class="text">
+        <div class="brand">Work</div>
+        <div class="name">Datamatics<i class="dot wait"></i></div>
+        <p class="blurb">Client portal for a B2B lead-generation business.</p>
+        <div class="host"><i class="dot wait"></i><span>datamatics.mehtahouse.cc</span></div>
       </div>
-    </section>
+      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
+    </a>
 
-    <section class="group" style="--n:1">
-      <h2>Mac</h2>
-      <div class="tiles">
-        <a class="tile card glass rise" href="https://github.com/theexxby-prog/nflbar" style="--tint:#64748b">
-          <div class="top"><span class="glyph"><svg><use href="#i-monitor"/></svg></span><span class="name">NFLBar</span></div>
-          <p class="blurb">NFL scores in the Mac menu bar. Open source.</p>
-          <div class="foot"><span class="host"><svg><use href="#i-github"/></svg>github.com/theexxby-prog/nflbar</span><svg><use href="#i-arrow"/></svg></div>
-        </a>
+    <a class="card rise" href="https://shania.mehtahouse.cc" style="--tint:#f43f5e" data-id="shania" data-app="shania">
+      <span class="art" aria-hidden="true">
+        <svg class="ink" viewBox="0 0 160 120">
+          <path d="M14 100H146" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity=".5"/>
+          <path class="paper" d="M22 100V58h24v42" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path class="paper" d="M86 100V50h26v50" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path class="paper" d="M116 100V68h22v32" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path class="paper" d="M52 100V30h28v70" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M60 30v-8h12v8M66 22V10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M28 68h4M36 68h4M28 80h4M36 80h4M28 92h4M36 92h4M60 46h4M68 46h4M60 60h4M68 60h4M60 74h4M68 74h4M60 88h4M68 88h4M92 62h4M102 62h4M92 76h4M102 76h4M92 90h4M102 90h4M122 78h8M122 90h8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+          <rect class="y" x="59" y="44" width="6" height="6" rx="1"/>
+        </svg>
+        <svg class="em" viewBox="0 0 100 100"><path class="f" d="M10 40v22h16l34 22V18L26 40Z"/><rect class="f" x="18" y="62" width="14" height="26" rx="5"/><path class="s" d="M72 38c6 6 6 18 0 24M82 30c10 10 10 30 0 40" style="stroke-width:5"/></svg>
+        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><path class="m" d="M10 46V32h8v14M22 46V18h10v28M36 46V28h8v18M27 18v-6M8 46h40"/><rect class="m2" x="25" y="22" width="3" height="3"/><text class="val" x="40" y="62">05</text></svg>
+      </span>
+      <div class="text">
+        <div class="brand">Made for</div>
+        <div class="name">Shania<i class="dot wait"></i></div>
+        <p class="blurb">Portfolio for a PR strategist in New York.</p>
+        <div class="host"><i class="dot wait"></i><span>shania.mehtahouse.cc</span></div>
       </div>
-    </section>
+      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
+    </a>
 
-    <section class="group door-group" style="--n:2">
-      <h2>Family</h2>
-      <a class="tile door glass rise" href="https://home.codebase.fyi">
-        <div>
-          <span class="glyph"><svg><use href="#i-lock"/></svg></span>
-          <h3>The rest lives behind the glass.</h3>
-          <p>Loans, bills, the house, books and the shopping lists are for the family. One PIN opens the home screen.</p>
-        </div>
-        <span class="go"><svg><use href="#i-right"/></svg></span>
-      </a>
-    </section>
+    <a class="card rise" href="https://samara.mehtahouse.cc" style="--tint:#f59e0b" data-id="samara" data-app="samara">
+      <span class="art" aria-hidden="true">
+        <svg class="ink" viewBox="0 0 160 120">
+          <path d="M14 100H146" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity=".5"/>
+          <path class="paper" d="M32 92a48 48 0 0 1 96 0Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M44 84c2-14 10-26 22-32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity=".5"/>
+          <path d="M20 92h120" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M56 100h48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <circle class="y" cx="80" cy="40" r="5.5" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+        <svg class="em" viewBox="0 0 100 100"><path class="f" d="M8 72a42 42 0 0 1 84 0Z"/><rect class="f" x="4" y="74" width="92" height="9" rx="4.5"/><circle class="h" cx="50" cy="26" r="6"/><path class="s" d="M20 66c2-14 10-24 22-30" style="stroke-width:4;opacity:.55"/></svg>
+        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><path class="m" d="M12 40a16 16 0 0 1 32 0ZM8 40h40M18 46h20"/><circle class="m2" cx="28" cy="21" r="2.5"/><text class="val" x="40" y="62">06</text></svg>
+      </span>
+      <div class="text">
+        <div class="brand">Made for</div>
+        <div class="name">Samara<i class="dot wait"></i></div>
+        <p class="blurb">Portfolio for a hospitality professional and kinesiology student.</p>
+        <div class="host"><i class="dot wait"></i><span>samara.mehtahouse.cc</span></div>
+      </div>
+      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
+    </a>
+
+    <a class="card rise" href="https://github.com/theexxby-prog/nflbar" style="--tint:#64748b" data-app="nflbar">
+      <span class="art" aria-hidden="true">
+        <svg class="ink" viewBox="0 0 160 120">
+          <path class="paper" d="M28 30a6 6 0 0 1 6-6h92a6 6 0 0 1 6 6v58H28Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path class="paper" d="M14 88h132v4a6 6 0 0 1-6 6H20a6 6 0 0 1-6-6Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M28 40h104" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M36 32h6M48 32h10M64 32h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+          <rect class="y" x="96" y="28.5" width="28" height="7" rx="3.5"/>
+          <path d="M40 56h44M40 66h60M40 76h32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".35"/>
+        </svg>
+        <svg class="em" viewBox="0 0 100 100"><rect class="f" x="6" y="18" width="88" height="60" rx="8"/><rect class="f" x="0" y="80" width="100" height="8" rx="4"/><path class="s" d="M6 34h88" style="stroke-width:3;opacity:.6"/><path class="s" d="M14 26h6M26 26h10M42 26h8" style="stroke-width:3.5"/><rect class="h" x="62" y="22" width="26" height="8" rx="4"/></svg>
+        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><rect class="m" x="11" y="20" width="34" height="22" rx="2.5"/><path class="m" d="M8 46h40M11 26h34" style="stroke-width:1.5"/><rect class="m2" x="34" y="21.5" width="8" height="3" rx="1.5"/><text class="val" x="40" y="62">07</text></svg>
+      </span>
+      <div class="text">
+        <div class="brand">Mac</div>
+        <div class="name">NFLBar<i class="dot none"></i></div>
+        <p class="blurb">NFL scores in the Mac menu bar. Open source.</p>
+        <div class="host"><i class="dot none"></i><span>github.com/theexxby-prog/nflbar</span></div>
+      </div>
+      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
+    </a>
+
+    <a class="card rise" href="https://home.codebase.fyi" style="--tint:#8a94a6" data-app="home">
+      <span class="art" aria-hidden="true">
+        <svg class="ink" viewBox="0 0 160 120">
+          <path d="M14 100H146" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity=".5"/>
+          <path d="M42 100V18h76v82" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/>
+          <path class="paper" d="M50 100V28a4 4 0 0 1 4-4h52a4 4 0 0 1 4 4v72" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <rect x="58" y="34" width="36" height="24" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <rect x="58" y="66" width="36" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle class="y" cx="102" cy="62" r="4" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <svg class="em" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><circle class="f" cx="30" cy="50" r="22"/><circle class="h" cx="30" cy="50" r="8"/><rect class="f" x="48" y="45" width="46" height="10" rx="3"/><rect class="f" x="70" y="55" width="8" height="12" rx="2"/><rect class="f" x="84" y="55" width="8" height="16" rx="2"/></g></svg>
+        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><path class="m" d="M17 46V18a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v28M12 46h32"/><rect class="m" x="22" y="21" width="10" height="8" rx="1" style="stroke-width:1.5"/><rect class="m" x="22" y="33" width="10" height="9" rx="1" style="stroke-width:1.5"/><circle class="m2" cx="36" cy="32" r="1.6"/><text class="val" x="40" y="62">08</text></svg>
+      </span>
+      <div class="text">
+        <div class="brand">Family</div>
+        <div class="name">Home<i class="dot none"></i></div>
+        <p class="blurb">Loans, bills, the house, books and the shopping lists are for the family. One PIN opens the home screen.</p>
+        <div class="host"><i class="dot none"></i><span>home.codebase.fyi</span></div>
+      </div>
+      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
+    </a>
 
   </div>
 
   <footer>
-    <span>© 2026 Vishal Mehta</span>
-    <span>Cloudflare Workers, Vercel</span>
-    <a href="https://github.com/theexxby-prog/codebase-fyi">Source on GitHub</a>
+    <div class="colophon">
+      <span>© 2026 Vishal Mehta</span>
+      <a href="https://github.com/theexxby-prog/codebase-fyi">Source on GitHub</a>
+    </div>
+    <div class="look" role="group" aria-label="Look">
+      <span class="look-label">Look</span>
+      <button class="opt" type="button" data-look="ink" aria-pressed="false">Ink</button>
+      <button class="opt" type="button" data-look="emblem" aria-pressed="true">Emblem</button>
+      <button class="opt" type="button" data-look="postcards" aria-pressed="false">Postcards</button>
+    </div>
   </footer>
 </main>
 </body>
