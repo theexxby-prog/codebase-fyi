@@ -93,10 +93,11 @@ cloud sessions at claude.ai/code. A cloud session sees only this repo, not the M
    it under "Not deployed yet" so the next Mac session ships it.
 
 ## Current state
-_Updated 2026-09-29 from the Mac (Fable session)._
-- **Live (main):** the glass redesign (Two Front Doors). Public cards: NFL, Cricket,
-  Marker, Datamatics portal, Shania, Samara, NFLBar, plus the Family door.
-- **Branch `front-three-looks`, preview only, not live:** the front page rebuilt as one
+_Updated 2026-09-29 from the Mac._
+- **Vishal is trying the three looks "for a few days" and may change his mind: don't remove any
+  look until he picks.** Next-game chips on Emblem are deferred (need small endpoints on NFL and
+  Cricket served from their caches; Cricket has a 100 calls/day budget).
+- **Live 2026-09-29 (main 63c3505, Vishal said ship):** the front page rebuilt as one
   8-card grid with three switchable looks (Ink shelf, Emblem board, Postcards), default
   emblem, footer "Look" switch saved in localStorage. Also: the group is an eyebrow inside
   each card, Shania and Samara have different drawings, the family door is a "Home" card,
