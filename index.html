@@ -19,26 +19,13 @@
 <meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
 <script>
-  // The look and the theme, both decided before first paint.
-  // Look: ?look= wins for this visit, then the saved choice ("look2": choices from the earlier
-  // three-look trial are not carried over), then house.
-  // Theme: the house look is light unless the toggle chose dark (localStorage.theme, like every
-  // house app). The other three looks keep their own rule (dark by default, light on a light
-  // system setting) and only take ?theme=.
+  // The theme, decided before first paint, the house way: light unless the toggle chose dark
+  // (localStorage.theme); ?theme= wins for that visit. The phone's own setting is ignored.
   (function () {
-    var d = document.documentElement, q = new URLSearchParams(location.search);
-    var looks = ['house', 'ink', 'emblem', 'postcards'], l = q.get('look');
-    if (looks.indexOf(l) < 0) { try { l = localStorage.getItem('look2'); } catch (e) { l = null; } }
-    d.dataset.look = looks.indexOf(l) < 0 ? 'house' : l;
-    var t = q.get('theme');
-    if (d.dataset.look === 'house' && t !== 'light' && t !== 'dark') {
-      t = 'light';
-      try { if (localStorage.theme === 'dark') t = 'dark'; } catch (e) {}
-    }
-    if (t === 'light' || t === 'dark') d.dataset.theme = t;
-    if (d.dataset.look === 'house') {
-      document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.setAttribute('content', t === 'dark' ? '#15120f' : '#f5f1ea'); });
-    }
+    var d = document.documentElement, t = new URLSearchParams(location.search).get('theme');
+    if (t !== 'light' && t !== 'dark') { t = 'light'; try { if (localStorage.theme === 'dark') t = 'dark'; } catch (e) {} }
+    d.dataset.theme = t;
+    document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.setAttribute('content', t === 'dark' ? '#15120f' : '#f5f1ea'); });
   })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -47,12 +34,10 @@
 <script type="module" src="/src/main.js"></script>
 </head>
 <body>
-<div class="sky" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span><span class="b4"></span></div>
 
-<!-- Shared symbols: the lock (Lucide, ISC licence) and the postcards' postmark -->
+<!-- Shared symbol: the lock (Lucide, ISC licence) -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
-  <symbol id="postmark" viewBox="0 0 44 44"><circle cx="26" cy="22" r="14" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="26" cy="22" r="3" fill="var(--st)"/><path d="M2 17c3-2 5 2 8 0M2 22c3-2 5 2 8 0M2 27c3-2 5 2 8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
 </svg>
 
 <main class="page">
@@ -71,23 +56,12 @@
     <div class="hero-text">
       <h1 class="display rise">Vishal Mehta</h1>
       <p class="rise">Small apps I build on the side, mostly for the people I live with. A few are open to anyone.</p>
-      <span class="sig rise"><i></i>Eight things, drawn in ink. The gold is the good part.</span>
     </div>
-    <!-- postcards only: the seal; the date is filled in by main.js -->
-    <svg class="seal" viewBox="0 0 100 100" aria-hidden="true">
-      <circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" stroke-width="1.4"/>
-      <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1"/>
-      <defs><path id="seal-ring" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0"/></defs>
-      <text><textPath href="#seal-ring" startOffset="2%">CODEBASE.FYI · NEW YORK · SINCE 2026 ·</textPath></text>
-      <text class="seal-mon" x="50" y="47" text-anchor="middle">SEP</text>
-      <text class="seal-day" x="50" y="61" text-anchor="middle">29</text>
-    </svg>
   </header>
 
   <!--
-    One grid of eight. Each card carries three drawings (ink, emblem, stamp); the look's CSS shows
-    one. Copy, links and status live once, in .text. data-id is the status key on home's
-    /api/public-status; data-app drives the emblem board's spans.
+    One grid of eight: 2 across on the phone, 4 on desktop, always a full rectangle. Each card carries
+    its ink drawing (.ink) and its text. data-id is the status key on home's /api/public-status.
   -->
   <div class="grid board">
 
@@ -103,8 +77,6 @@
             <path d="M60 40h16M63.5 37v6M68 37v6M72.5 37v6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
           </g>
         </svg>
-        <svg class="em" viewBox="0 0 100 100"><g transform="rotate(-35 50 50)"><ellipse class="f" cx="50" cy="50" rx="46" ry="27"/><path class="s" d="M30 50h40M38 44v12M46 44v12M54 44v12M62 44v12"/><path class="s" d="M12 42c-2 5-2 11 0 16M88 42c2 5 2 11 0 16" style="stroke-width:4;opacity:.6"/></g></svg>
-        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><g transform="rotate(-32 28 30)"><ellipse class="m" cx="28" cy="30" rx="15" ry="9"/><path class="m" d="M21 30h14M24.5 27.5v5M28 27.5v5M31.5 27.5v5" style="stroke-width:1.5"/></g><text class="val" x="40" y="62">01</text></svg>
       </span>
       <div class="text">
         <div class="brand">Sports</div>
@@ -112,7 +84,6 @@
         <p class="blurb">This week's games, kickoff times where you are, and where each one is streaming.</p>
         <div class="host"><i class="dot wait"></i><span>nfl.codebase.fyi</span></div>
       </div>
-      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
     </a>
 
     <a class="card rise" href="https://cricket.codebase.fyi" style="--tint:#22c55e" data-id="cricket" data-app="cricket">
@@ -127,8 +98,6 @@
           <path d="M118 100L136 58" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
           <path d="M136 58l4-10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
         </svg>
-        <svg class="em" viewBox="0 0 100 100"><circle class="f" cx="50" cy="50" r="46"/><path class="s" d="M28 14c-14 20-14 52 0 72M72 14c14 20 14 52 0 72" style="stroke-width:4"/><path class="s" d="M22 28l6 3M20 40l6 2M20 52l6 1M22 64l6 0M26 76l6-2M78 28l-6 3M80 40l-6 2M80 52l-6 1M78 64l-6 0M74 76l-6-2" style="stroke-width:3.5"/></svg>
-        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><path class="m" d="M24 46V20M31 46V20M38 46V20M21 18h9M32 18h9"/><circle class="m" cx="14" cy="30" r="3.5"/><text class="val" x="40" y="62">02</text></svg>
       </span>
       <div class="text">
         <div class="brand">Sports</div>
@@ -136,7 +105,6 @@
         <p class="blurb">India's men's matches with live scores and a bell when play starts.</p>
         <div class="host"><i class="dot wait"></i><span>cricket.codebase.fyi</span></div>
       </div>
-      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
     </a>
 
     <a class="card rise" href="https://marker.codebase.fyi" style="--tint:#e11d48" data-id="marker" data-app="marker">
@@ -151,8 +119,6 @@
           <path d="M54 82h6M92 82h6M54 94h6M92 94h6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
           <ellipse class="paper" cx="128" cy="96" rx="14" ry="4" stroke="currentColor" stroke-width="2.5"/>
         </svg>
-        <svg class="em" viewBox="0 0 100 100"><circle class="f" cx="50" cy="50" r="46"/><circle class="s" cx="50" cy="50" r="38" style="stroke-width:9;stroke-dasharray:15 15;stroke-linecap:butt"/><circle class="s" cx="50" cy="50" r="20" style="stroke-width:4"/></svg>
-        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><circle class="m" cx="28" cy="31" r="14"/><circle class="m" cx="28" cy="31" r="9" style="stroke-dasharray:4 4;stroke-width:3"/><circle class="m2" cx="28" cy="31" r="2.5"/><text class="val" x="40" y="62">03</text></svg>
       </span>
       <div class="text">
         <div class="brand">Games</div>
@@ -160,7 +126,6 @@
         <p class="blurb">Chip ledger for a home poker game. Settles everyone up at close.</p>
         <div class="host"><i class="dot wait"></i><span>marker.codebase.fyi</span></div>
       </div>
-      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
     </a>
 
     <a class="card rise" href="https://datamatics.mehtahouse.cc" style="--tint:#0ea5e9" data-id="datamatics" data-app="datamatics">
@@ -172,8 +137,6 @@
           <path d="M30 62h100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           <rect class="y" x="72" y="57" width="16" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
         </svg>
-        <svg class="em" viewBox="0 0 100 100"><rect class="f" x="6" y="28" width="88" height="62" rx="10"/><path class="s" d="M34 28v-8a6 6 0 0 1 6-6h20a6 6 0 0 1 6 6v8"/><path class="s" d="M6 54h88" style="stroke-width:4"/><rect class="h" x="42" y="49" width="16" height="11" rx="2"/></svg>
-        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><rect class="m" x="11" y="24" width="34" height="22" rx="3"/><path class="m" d="M22 24v-3a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v3M11 33h34"/><rect class="m2" x="25" y="31" width="6" height="4" rx="1"/><text class="val" x="40" y="62">04</text></svg>
       </span>
       <div class="text">
         <div class="brand">Work</div>
@@ -181,7 +144,6 @@
         <p class="blurb">Client portal for a B2B lead-generation business.</p>
         <div class="host"><i class="dot wait"></i><span>datamatics.mehtahouse.cc</span></div>
       </div>
-      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
     </a>
 
     <a class="card rise" href="https://shania.mehtahouse.cc" style="--tint:#f43f5e" data-id="shania" data-app="shania">
@@ -196,8 +158,6 @@
           <path d="M28 68h4M36 68h4M28 80h4M36 80h4M28 92h4M36 92h4M60 46h4M68 46h4M60 60h4M68 60h4M60 74h4M68 74h4M60 88h4M68 88h4M92 62h4M102 62h4M92 76h4M102 76h4M92 90h4M102 90h4M122 78h8M122 90h8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
           <rect class="y" x="59" y="44" width="6" height="6" rx="1"/>
         </svg>
-        <svg class="em" viewBox="0 0 100 100"><path class="f" d="M10 40v22h16l34 22V18L26 40Z"/><rect class="f" x="18" y="62" width="14" height="26" rx="5"/><path class="s" d="M72 38c6 6 6 18 0 24M82 30c10 10 10 30 0 40" style="stroke-width:5"/></svg>
-        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><path class="m" d="M10 46V32h8v14M22 46V18h10v28M36 46V28h8v18M27 18v-6M8 46h40"/><rect class="m2" x="25" y="22" width="3" height="3"/><text class="val" x="40" y="62">05</text></svg>
       </span>
       <div class="text">
         <div class="brand">Made for</div>
@@ -205,7 +165,6 @@
         <p class="blurb">Portfolio for a PR strategist in New York.</p>
         <div class="host"><i class="dot wait"></i><span>shania.mehtahouse.cc</span></div>
       </div>
-      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
     </a>
 
     <a class="card rise" href="https://samara.mehtahouse.cc" style="--tint:#f59e0b" data-id="samara" data-app="samara">
@@ -218,8 +177,6 @@
           <path d="M56 100h48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
           <circle class="y" cx="80" cy="40" r="5.5" stroke="currentColor" stroke-width="2.5"/>
         </svg>
-        <svg class="em" viewBox="0 0 100 100"><path class="f" d="M8 72a42 42 0 0 1 84 0Z"/><rect class="f" x="4" y="74" width="92" height="9" rx="4.5"/><circle class="h" cx="50" cy="26" r="6"/><path class="s" d="M20 66c2-14 10-24 22-30" style="stroke-width:4;opacity:.55"/></svg>
-        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><path class="m" d="M12 40a16 16 0 0 1 32 0ZM8 40h40M18 46h20"/><circle class="m2" cx="28" cy="21" r="2.5"/><text class="val" x="40" y="62">06</text></svg>
       </span>
       <div class="text">
         <div class="brand">Made for</div>
@@ -227,7 +184,6 @@
         <p class="blurb">Portfolio for a hospitality professional and kinesiology student.</p>
         <div class="host"><i class="dot wait"></i><span>samara.mehtahouse.cc</span></div>
       </div>
-      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
     </a>
 
     <a class="card rise" href="https://github.com/theexxby-prog/nflbar" style="--tint:#64748b" data-app="nflbar">
@@ -240,8 +196,6 @@
           <rect class="y" x="96" y="28.5" width="28" height="7" rx="3.5"/>
           <path d="M40 56h44M40 66h60M40 76h32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".35"/>
         </svg>
-        <svg class="em" viewBox="0 0 100 100"><rect class="f" x="6" y="18" width="88" height="60" rx="8"/><rect class="f" x="0" y="80" width="100" height="8" rx="4"/><path class="s" d="M6 34h88" style="stroke-width:3;opacity:.6"/><path class="s" d="M14 26h6M26 26h10M42 26h8" style="stroke-width:3.5"/><rect class="h" x="62" y="22" width="26" height="8" rx="4"/></svg>
-        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><rect class="m" x="11" y="20" width="34" height="22" rx="2.5"/><path class="m" d="M8 46h40M11 26h34" style="stroke-width:1.5"/><rect class="m2" x="34" y="21.5" width="8" height="3" rx="1.5"/><text class="val" x="40" y="62">07</text></svg>
       </span>
       <div class="text">
         <div class="brand">Mac</div>
@@ -249,7 +203,6 @@
         <p class="blurb">NFL scores in the Mac menu bar. Open source.</p>
         <div class="host"><i class="dot none"></i><span>github.com/theexxby-prog/nflbar</span></div>
       </div>
-      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
     </a>
 
     <a class="card rise" href="https://home.codebase.fyi" style="--tint:#8a94a6" data-app="home">
@@ -262,8 +215,6 @@
           <rect x="58" y="66" width="36" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
           <circle class="y" cx="102" cy="62" r="4" stroke="currentColor" stroke-width="2"/>
         </svg>
-        <svg class="em" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><circle class="f" cx="30" cy="50" r="22"/><circle class="h" cx="30" cy="50" r="8"/><rect class="f" x="48" y="45" width="46" height="10" rx="3"/><rect class="f" x="70" y="55" width="8" height="12" rx="2"/><rect class="f" x="84" y="55" width="8" height="16" rx="2"/></g></svg>
-        <svg class="stamp" viewBox="0 0 56 68"><rect class="paper" width="56" height="68" rx="2"/><rect class="perf" width="56" height="68"/><path class="m" d="M17 46V18a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v28M12 46h32"/><rect class="m" x="22" y="21" width="10" height="8" rx="1" style="stroke-width:1.5"/><rect class="m" x="22" y="33" width="10" height="9" rx="1" style="stroke-width:1.5"/><circle class="m2" cx="36" cy="32" r="1.6"/><text class="val" x="40" y="62">08</text></svg>
       </span>
       <div class="text">
         <div class="brand">Family</div>
@@ -271,7 +222,6 @@
         <p class="blurb">Loans, bills, the house, books and the shopping lists are for the family. One PIN opens the home screen.</p>
         <div class="host"><i class="dot none"></i><span>home.codebase.fyi</span></div>
       </div>
-      <svg class="mark" aria-hidden="true"><use href="#postmark"/></svg>
     </a>
 
   </div>
@@ -280,13 +230,6 @@
     <div class="colophon">
       <span>© 2026 Vishal Mehta</span>
       <a href="https://github.com/theexxby-prog/codebase-fyi">Source on GitHub</a>
-    </div>
-    <div class="look" role="group" aria-label="Look">
-      <span class="look-label">Look</span>
-      <button class="opt" type="button" data-look="house" aria-pressed="true">House</button>
-      <button class="opt" type="button" data-look="ink" aria-pressed="false">Ink</button>
-      <button class="opt" type="button" data-look="emblem" aria-pressed="false">Emblem</button>
-      <button class="opt" type="button" data-look="postcards" aria-pressed="false">Postcards</button>
     </div>
   </footer>
 </main>

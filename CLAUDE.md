@@ -2,8 +2,8 @@
 
 The public front door at codebase.fyi: the apps anyone can use, plus a door to the
 family's home screen (home.codebase.fyi, a separate private repo). Plain HTML/CSS built
-with Vite, no framework. Designed by Fable: the glass (2026-09-28) and three looks
-(2026-09-29). Since 2026-10-01 the default look is the house style (design.codebase.fyi/v2).
+with Vite, no framework. Since 2026-10-01 it uses the house style (design.codebase.fyi/v2), like
+every app; the earlier glass and three-look designs (Fable, 2026-09-28/29) are retired.
 
 | | |
 |---|---|
@@ -29,38 +29,20 @@ with Vite, no framework. Designed by Fable: the glass (2026-09-28) and three loo
   the DS record at the registrar first, or the domain stops resolving.
 - The cards are written straight into `index.html` (no data file, no framework), so the
   page works without JavaScript and link previews see the content.
-- `src/glass.css` must stay identical to `home-codebase-fyi/public/glass.css`.
-- **Four looks, one page.** `<html data-look="house|ink|emblem|postcards">` picks the look;
-  `src/look-*.css` hold each look's colours, card surfaces and grid spans, scoped under
-  `[data-look="…"]`. `src/site.css` is the layout they share. Markup, copy, links and
-  status dots are written once in `index.html`; every card carries its three drawings
-  (`.ink`, `.em`, `.stamp`, inline SVG) and the look's CSS shows one.
-  - Default is **house** (2026-10-01, Vishal: the front door should match the house style every
-    app uses). `src/look-house.css` copies the house v2 values (warm ground, system font, title left,
-    cards with the Ink drawings flush on top, soft hairline shadow, graphite accent) because the page
-    doesn't link house.css; keep it in step with design-codebase-fyi's v2. The head script sets the
-    look before first paint: `?look=` for that visit (not saved), else the choice saved in
-    `localStorage.look2` (choices from the earlier three-look trial, under `look`, are ignored), else
-    house. The footer's "Look" control saves the choice.
-  - **House look theme:** light unless the moon/sun toggle (`.theme`, outermost top right, house look
-    only) chose dark, saved as `localStorage.theme` like every house app; the system setting is ignored.
-  - Ink, emblem and postcards follow the same theme rule as glass.css (dark by default, light on
-    `prefers-color-scheme: light` unless `data-theme=dark`, light on `data-theme=light`); ink and
-    postcards override the colour tokens (`--bg`, `--ink`…).
-  - The grid is one 8-card `.grid.board`; it must be a full rectangle in every look at
-    both widths. Emblem's spans are set per `data-app` (phone: NFL, Cricket, NFLBar and
-    Home span 2; desktop: NFL and Cricket span 2, Home spans 3). Adding or removing a card
-    means re-balancing those spans.
-  - Emblem's "next game" chips from the mockup are left out until there is real data.
-  - Check every look with the symmetry tool:
-    `node ~/dev/design-codebase-fyi/tools/symmetry-check.mjs http://localhost:4173/` (house, plus
-    `?theme=dark`, `?look=ink`, `?look=emblem`, `?look=postcards`) against `npm run build && npx vite preview --port 4173`.
-  - **To retire a look later:** delete its `src/look-*.css` and its import in
-    `src/main.js`, remove its button from the footer `.look` group, drop its SVG from each
-    card (`.ink` for ink, `.em` for emblem, `.stamp` plus `.mark` for postcards; the
-    `#postmark` symbol and `.seal` go with postcards, `.sig` with ink), and remove its name
-    from the `looks` list in the head script. If only one look is left, remove the footer
-    control and the head script's look branch, and hard-code `data-look` on `<html>`.
+- **One look: the house style** (design.codebase.fyi/v2). Ink, Emblem and Postcards were retired
+  2026-10-01 (Vishal: "yes - remove"). `src/look-house.css` copies the house v2 values (warm ground,
+  system font, title left, cards with the ink drawing flush on top, soft hairline shadow, graphite
+  accent) because the page doesn't link house.css; when house v2's colours change, copy them here.
+  `<html data-look="house">` stays hard-coded (the CSS is scoped to it). `src/site.css` is the layout.
+  - Theme: light unless the moon/sun toggle (`.theme`, outermost top right) chose dark, saved as
+    `localStorage.theme` like every house app; `?theme=` wins for one visit; the system setting is
+    ignored. Set by the head script before first paint.
+  - The grid is one 8-card `.grid.board`: 2 across on the phone, 4 on desktop, so it's a full
+    rectangle at both widths. Adding or removing a card means keeping it a multiple of 4 (or
+    rebalancing).
+  - Check with the symmetry tool: `node ~/dev/design-codebase-fyi/tools/symmetry-check.mjs
+    http://localhost:4173/` (and `?theme=dark`) against `npm run build && npx vite preview --port 4173`.
+  - `src/glass.css` is kept only for its base reset and the status dot.
 - Status dots come from `https://home.codebase.fyi/api/public-status` (up/down only, for
   apps marked `public: true` in the home repo's `src/apps.js`). If it fails the dots stay
   neutral; the page never depends on it.
@@ -99,11 +81,9 @@ cloud sessions at claude.ai/code. A cloud session sees only this repo, not the M
 
 ## Current state
 _Updated 2026-10-01 from the Mac._
-- **Live 2026-10-01: the house look is the default** (Vishal asked for codebase.fyi to be in line with
-  the house style, frozen as v2 the same day). Same content, same 8 cards, 2 across on the phone and 4 on
-  desktop; Ink drawings on a plain fill; light by default with the house moon/sun toggle. Ink, Emblem and
-  Postcards are still in the footer switch. Symmetry check OK for all four looks (house light and dark)
-  at 390 and 1440. `public/og.png` retaken in the house look.
-- **Open:** Vishal to say whether to retire Ink, Emblem and Postcards (steps under Rules) now that house
-  is the default. Next-game chips stay deferred. Check on a real iPhone. The remote branch
-  `claude/webpage-styling-issues-rgssn3` (2026-09-14) is stale, nothing ahead of main.
+- **Live 2026-10-01: house style only.** The house look became the default, then Ink, Emblem and
+  Postcards were retired the same day (their CSS, drawings, the footer switch, the seal, the pointer
+  sheen). Same content and 8 cards. Symmetry check OK light and dark at 390 and 1440. `public/og.png`
+  is in the house look.
+- **Open:** check on a real iPhone. The remote branch `claude/webpage-styling-issues-rgssn3`
+  (2026-09-14) is stale, nothing ahead of main.

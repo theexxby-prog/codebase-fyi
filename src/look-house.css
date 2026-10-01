@@ -1,7 +1,7 @@
-/* Look · House (the default since 2026-10-01). The public front door in the house style every app
+/* The house look (since 2026-10-01; the only look since the other three were retired the same day). The public front door in the house style every app
    uses (design.codebase.fyi/v2, DESIGN.md): warm paper ground, the system font, title on the left,
    cards with the drawing flush on top and the text below, a soft hairline shadow, tint only for
-   actions. The drawings are the Ink look's (ink lines, one gold detail), like Home's tiles. Light by
+   actions. The drawings are ink lines with one gold detail, like Home's tiles. Light by
    default; dark only from the moon/sun toggle (the phone's own setting is ignored, as in every app).
    The page doesn't link house.css (its markup is its own), so the house v2 values are copied here. */
 
@@ -21,10 +21,6 @@
   --ring: transparent;
   --accent: #4a423b;          /* graphite: the public site's own slot, quieter than any app */
   --shadow-card: 0 0 0 1px var(--line), 0 6px 18px -12px rgba(70, 45, 20, 0.22);
-  --seg-bg: var(--fill);
-  --seg-line: transparent;
-  --seg-on: var(--surface);
-  --seg-on-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   color-scheme: light;
 }
 :root[data-look="house"][data-theme="dark"] {
@@ -42,8 +38,6 @@
   --down: #ff453a;
   --accent: #d8cfc4;
   --shadow-card: 0 0 0 1px var(--line);
-  --seg-on: var(--line-2);
-  --seg-on-shadow: none;
   color-scheme: dark;
 }
 
@@ -62,7 +56,6 @@
   font-weight: 600;
 }
 [data-look="house"] .pill:hover { background: var(--line); }
-.theme { display: none; }
 [data-look="house"] .theme {
   display: inline-grid;
   place-items: center;
@@ -110,10 +103,6 @@
 [data-look="house"] .host { margin-top: 8px; }
 [data-look="house"] .host .dot { display: none; }
 
-/* footer switch: the house segmented control */
-[data-look="house"] .look { border-radius: 9px; border: 0; }
-[data-look="house"] .look .opt { border-radius: 7px; }
-[data-look="house"] .look .opt:focus-visible { outline-color: var(--accent); }
 
 @media (min-width: 900px) {
   [data-look="house"] .hero { padding: 34px 2px 28px; }
