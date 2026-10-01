@@ -1,4 +1,4 @@
-/* codebase.fyi page layout shared by the three looks (ink, emblem, postcards). Each look's own file
+/* codebase.fyi page layout shared by the four looks (house, ink, emblem, postcards). Each look's own file
    sets colours, card surfaces and grid spans under html[data-look="…"]. Tokens (--bg, --ink…) come
    from glass.css; ink and postcards override them in their files. */
 
@@ -22,6 +22,7 @@ nav {
   padding-left: 4px;
 }
 .wordmark b { color: var(--ink); }
+nav .tools { display: flex; align-items: center; gap: 8px; }
 
 /* hero: text left; the postcards seal sits on the right and is hidden in the other looks */
 .hero {

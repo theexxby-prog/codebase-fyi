@@ -5,6 +5,7 @@
 
 import "./glass.css";
 import "./site.css";
+import "./look-house.css";
 import "./look-emblem.css";
 import "./look-ink.css";
 import "./look-postcards.css";
@@ -19,11 +20,32 @@ const paintLook = () => opts.forEach((b) => b.setAttribute("aria-pressed", Strin
 opts.forEach((b) =>
   b.addEventListener("click", () => {
     root.dataset.look = b.dataset.look;
-    try { localStorage.setItem("look", b.dataset.look); } catch {}
+    try { localStorage.setItem("look2", b.dataset.look); } catch {}
+    // the house look is light unless the toggle chose dark; the other looks keep their own rule
+    if (b.dataset.look === "house") root.dataset.theme = savedTheme() || "light";
+    else delete root.dataset.theme;
     paintLook();
+    paintTheme();
   }),
 );
 paintLook();
+
+// the house look's moon/sun toggle (outermost top right, as in every house app); saves localStorage.theme
+const savedTheme = () => { try { return localStorage.theme === "dark" ? "dark" : null; } catch { return null; } };
+const themeBtn = document.querySelector(".theme");
+function paintTheme() {
+  const dark = root.dataset.theme === "dark";
+  themeBtn?.setAttribute("aria-label", dark ? "Light mode" : "Dark mode");
+  if (root.dataset.look === "house")
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute("content", dark ? "#15120f" : "#f5f1ea"));
+}
+themeBtn?.addEventListener("click", () => {
+  const next = root.dataset.theme === "dark" ? "light" : "dark";
+  root.dataset.theme = next;
+  try { localStorage.theme = next; } catch {}
+  paintTheme();
+});
+paintTheme();
 
 // postcards: the seal carries today's date
 {
