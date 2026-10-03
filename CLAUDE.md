@@ -2,8 +2,8 @@
 
 The public front door at codebase.fyi: the apps anyone can use, plus a door to the
 family's home screen (home.codebase.fyi, a separate private repo). Plain HTML/CSS built
-with Vite, no framework. Since 2026-10-01 it uses the house style (design.codebase.fyi/v2), like
-every app; the earlier glass and three-look designs (Fable, 2026-09-28/29) are retired.
+with Vite, no framework. Since 2026-10-03 it has its own look, Fable's "Device wall + live strip" (not the
+house style); earlier glass, three-look and house-style versions are in git history.
 
 | | |
 |---|---|
@@ -29,28 +29,36 @@ every app; the earlier glass and three-look designs (Fable, 2026-09-28/29) are r
   the DS record at the registrar first, or the domain stops resolving.
 - The cards are written straight into `index.html` (no data file, no framework), so the
   page works without JavaScript and link previews see the content.
-- **One look: the house style** (design.codebase.fyi/v2). Ink, Emblem and Postcards were retired
-  2026-10-01 (Vishal: "yes - remove"). `src/look-house.css` copies the house v2 values (warm ground,
-  system font, title left, cards with the ink drawing flush on top, soft hairline shadow, graphite
-  accent) because the page doesn't link house.css; when house v2's colours change, copy them here.
-  `<html data-look="house">` stays hard-coded (the CSS is scoped to it). `src/site.css` is the layout.
+- **One look: "Device wall + live strip" (2026-10-03, Fable; Vishal chose it over a split-flap Departures
+  board and a shopfront Street).** Each app is drawn as the device it runs on, as inline SVG in `index.html`:
+  NFL and Cricket as phones, Datamatics as a laptop, Shania and Samara as browser windows, NFLBar as a Mac
+  menu bar, Home as a door. Devices float, tilt toward the mouse and cast a soft shadow; the door swings
+  open on hover. System font only (he has rejected serifs and display fonts; no Google Fonts). The approved
+  mockup (with demo data) is `design/device-wall-mockup.html`. `src/site.css` is the whole stylesheet,
+  `src/main.js` the behaviour. Marker was retired on 2026-10-03 and has no card.
+  - **No invented numbers.** The phone screens hold neutral placeholder bars; real games and the match are
+    filled in by `main.js` from the feed, or stay as bars. `test/page.test.js` fails on sample scores.
+  - **"Right now" strip + live screens:** `https://home.codebase.fyi/api/public-now` (home repo `src/now.js`;
+    next India match, this week's NFL games, public fields only, 5-min cache). The strip is hidden when the
+    feed is empty or unreachable. Times are shown in the visitor's own timezone.
+  - **The grid is symmetric: 7 apps in 8 cells.** 2 across on the phone, 4 on desktop; the Datamatics card is
+    `.wide` (spans two columns, counts as two cells and must start on an even cell). `npm test` checks the
+    cell count is a multiple of 4. Adding or removing an app means re-balancing (move the wide card, or add
+    apps in pairs). Equal card heights.
   - Theme: light unless the moon/sun toggle (`.theme`, outermost top right) chose dark, saved as
-    `localStorage.theme` like every house app; `?theme=` wins for one visit; the system setting is
-    ignored. Set by the head script before first paint.
-  - The grid is one 8-card `.grid.board`: 2 across on the phone, 4 on desktop, so it's a full
-    rectangle at both widths. Adding or removing a card means keeping it a multiple of 4 (or
-    rebalancing).
-  - Check with the symmetry tool: `node ~/dev/design-codebase-fyi/tools/symmetry-check.mjs
-    http://localhost:4173/` (and `?theme=dark`) against `npm run build && npx vite preview --port 4173`.
-  - `src/glass.css` is kept only for its base reset and the status dot.
+    `localStorage.theme`; `?theme=` wins for one visit; the system setting is ignored (a test checks there is
+    no `prefers-color-scheme`). Set by the head script before first paint.
+  - Only transform, opacity and stroke-dashoffset animate; off-screen cards and a hidden tab pause
+    (`.paused`); reduced motion shows rest states. No CSS `color-mix()` (needs iOS 16.2).
 - Status dots come from `https://home.codebase.fyi/api/public-status` (up/down only, for
   apps marked `public: true` in the home repo's `src/apps.js`). If it fails the dots stay
   neutral; the page never depends on it.
-- Only public apps get a card here. Loans, ledger, medical, house, books, plexpull
-  and list live on the family home screen and are never linked or described
-  here.
-- `public/og.png` is a 1200×630 screenshot of the page (house look, light). Retake it after a
-  big visual change.
+- Only public apps get a card here. Loans, ledger, medical, house, books, plexpull, list and balance live on
+  the family home screen and are never linked or described here (the Home card only says it is for the family).
+- `public/og.png` is a 1200×630 screenshot of the page (light). Retake it after a big visual change, with the
+  feeds blocked so it shows the neutral placeholder screens and never goes stale: headless Chrome with
+  `--host-resolver-rules="MAP home.codebase.fyi 127.0.0.1:1" --window-size=1200,630 --screenshot=...` against
+  `npx vite preview`. It can hang after writing the file; kill the headless Chrome afterwards.
 - This repo is public. Nothing personal goes in it: no finances, no account ids, no
   secrets.
 
@@ -80,25 +88,12 @@ cloud sessions at claude.ai/code. A cloud session sees only this repo, not the M
    it under "Not deployed yet" so the next Mac session ships it.
 
 ## Current state
-_Updated 2026-10-03 from the Mac (IN PROGRESS: the redesign is not live yet)._
-- **Redesign underway: "Device wall + live strip" (Fable's design B, chosen by Vishal 2026-10-03).** The
-  approved mockup is `design/device-wall-mockup.html` (open it in a browser; it has demo data). The live site
-  is still the 2026-10-01 house-style card grid until this ships.
-- **Done:** `home.codebase.fyi/api/public-now` is live (home repo `src/now.js`, commit facc152): next India
-  match + this week's NFL games, public fields only, CORS open, 5-min cache. The strip and the NFL, Cricket and
-  NFLBar phone screens should be filled from it.
-- **To do (the build, in this repo):**
-  1. Rewrite `index.html` from the mockup: hero "Vishal Mehta makes small apps.", the hidden-when-empty live
-     strip, 8 device cards (NFL/Cricket/Marker phones, Datamatics laptop, Shania/Samara browser windows,
-     NFLBar menu bar, Home door). System font only: drop the Google Fonts link. Keep the head (og, canonical,
-     theme-color, the theme script) and the Family pill + moon/sun toggle top right.
-  2. Replace `src/look-house.css`, `src/glass.css`, `src/site.css` with one stylesheet from the mockup; rewrite
-     `src/main.js` (status dots from `/api/public-status`, strip + screens from `/api/public-now`, pointer tilt,
-     off-screen pause).
-  3. **Don't ship made-up scores or numbers.** The mockup's phone screens show fake matchups and Marker totals.
-     Use neutral placeholder bars in the HTML, and fill real games/match only from the feed. Dots: NFLBar and
-     Home have no status feed, so hide their dot; others blink only while the fetch is pending.
-  4. Grid stays 2x4 / 4x2, equal card heights, light by default, dark only from the toggle, no prefers-color-scheme.
-  5. Retake `public/og.png`, update this file and README, push to `main` (Vercel deploys). Check the live JS
-     filename against a local build (see Rules).
-- **Not deployed yet:** the redesign itself (nothing of it is on `main` except this note and the mockup).
+_Updated 2026-10-03 from the Mac._
+- **Live 2026-10-03: the Device wall redesign** (7 apps, Datamatics wide; Marker card removed because the app
+  was retired the same day). Strip and the NFL / Cricket / NFLBar screens read the live feed. Tests 5/5, desktop
+  and phone checked light and dark at 390 and 1156 wide: full rectangle, equal heights, no horizontal scroll.
+  `public/og.png` retaken (placeholder screens).
+- **Open / next:**
+  - Not yet tried on a real iPhone (float animation smoothness with 7 cards, the strip scrolling sideways).
+  - The "Right now" strip is NFL and Cricket only; no Marker, and no feed for the portfolios.
+  - Link-preview caches (iMessage, Slack) may show the old image for a while.

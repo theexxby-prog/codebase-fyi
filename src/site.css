@@ -1,113 +1,109 @@
-/* codebase.fyi page layout. look-house.css sets the colours and card surfaces (the house style);
-   glass.css gives the base reset and the status dot. */
+/* codebase.fyi: the public front page, "Device wall + live strip" (Fable, 2026-10-03). Own look, not the house
+   style; system font only. Each app is drawn as the device it runs on (inline SVG in index.html). Only transform,
+   opacity and stroke-dashoffset animate; off-screen cards and a hidden tab pause (.paused); reduced motion shows rest
+   states. Light by default, dark only from the toggle ([data-theme="dark"]), never the device's own setting. */
+:root{
+  --bg:#f4f4f1; --ink:#131313; --mute:#6b6b68; --line:rgba(0,0,0,.09); --card:#ffffff;
+  --frame:#1a1b1f; --screen:#ffffff; --sink:#1a1b1f; --smute:#9a9a9a; --spanel:#f1f1f3;
+  --up:#16a34a; --down:#e11d48; --wait:#a3a3a3;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+:root[data-theme=dark]{
+  --bg:#0c0d10; --ink:#f2f2f0; --mute:#9b9ea5; --line:rgba(255,255,255,.1); --card:#15171c;
+  --frame:#2a2c33; --screen:#1c1e24; --sink:#f2f2f0; --smute:#7d8188; --spanel:#262930;
+  --up:#4ade80; --down:#fb7185; --wait:#6b7280;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.page{max-width:1100px;margin:0 auto;padding:14px 16px 48px}
 
-.page {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: calc(14px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom));
-}
+nav{display:flex;align-items:center;justify-content:space-between;height:52px}
+.wordmark{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.wordmark span{font-weight:400;color:var(--mute)}
+.tools{display:flex;gap:8px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);font-size:14px;font-weight:600}
+.pill svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+.theme{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer}
+.theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.theme .i-sun{display:none}
+:root[data-theme=dark] .theme .i-moon{display:none}
+:root[data-theme=dark] .theme .i-sun{display:block}
 
-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 44px;
-}
-.wordmark {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink-2);
-  padding-left: 4px;
-}
-.wordmark b { color: var(--ink); }
-nav .tools { display: flex; align-items: center; gap: 8px; }
+.hero{padding:36px 0 18px;max-width:760px}
+.hero h1{font-size:clamp(40px,7.5vw,72px);font-weight:800;letter-spacing:-.04em;line-height:1}
+.hero h1 em{font-style:normal;color:var(--mute);font-weight:500}
+.hero p{margin-top:14px;font-size:17px;color:var(--mute);max-width:48ch;line-height:1.45}
 
-/* hero: text left */
-.hero {
-  padding: 36px 4px 28px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0;
-  align-items: center;
-}
-.hero h1 { margin: 0; font-size: 40px; line-height: 1; }
-.hero p { margin: 14px 0 0; font-size: 17px; line-height: 1.45; color: var(--ink-2); max-width: 30em; }
+/* live strip: filled by JS; hidden when there is nothing to say */
+.live{display:flex;gap:8px;align-items:center;margin:14px -16px 20px;padding:0 16px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.live::-webkit-scrollbar{display:none}
+.live[hidden]{display:none}
+.live .tag{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--down)}
+.live .tag i{width:7px;height:7px;border-radius:50%;background:currentColor;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(.5);opacity:.4}}
+.chip{flex:none;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px 0 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px;font-weight:600;white-space:nowrap;animation:rise .5s both;animation-delay:var(--d,0s)}
+.chip b{width:8px;height:8px;border-radius:2px;background:var(--tint);transform:rotate(45deg)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-/* the one grid of eight: 2 across on the phone, 4 on desktop */
-.board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+/* grid: 2x4 phone, 4x2 desktop */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (min-width:760px){.grid{grid-template-columns:repeat(4,1fr);gap:16px}}
+.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;min-height:44px;transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 20px 40px -24px rgba(0,0,0,.35)}
+.card:focus-visible{outline:2px solid var(--tint);outline-offset:2px}
+.stage{position:relative;aspect-ratio:1/1;perspective:700px;display:grid;place-items:center;overflow:hidden}
+.stage::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 110%,var(--tint),transparent 60%);opacity:.26}
 
-/* one card: the drawing on top, text below */
-.card {
-  position: relative;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  min-width: 0;
-  color: var(--ink);
-  -webkit-tap-highlight-color: transparent;
-}
-.card > * { min-width: 0; }
-.art { display: grid; }
-.art svg { display: none; }
-.text {
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 0;
-  align-content: start;
-}
-.brand { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
-.name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 2px;
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.blurb { margin: 8px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--ink-2); align-self: start; }
-.host {
-  display: none;
-  align-items: center;
-  gap: 7px;
-  margin-top: 12px;
-  font-size: 12px;
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.host span { overflow: hidden; text-overflow: ellipsis; }
+.float{display:grid;place-items:center;width:100%;animation:bob 5.5s ease-in-out infinite;animation-delay:var(--d,0s);will-change:transform}
+@keyframes bob{0%,100%{transform:translateY(-4px)}50%{transform:translateY(4px)}}
+.dev{display:block;transform:rotateY(var(--ry,-20deg)) rotateX(var(--rx,9deg));transform-style:preserve-3d;transition:transform .18s ease-out;width:var(--w);filter:drop-shadow(0 18px 14px rgba(0,0,0,.22))}
+.dev svg{display:block;width:100%;height:auto}
+.shadow{position:absolute;bottom:10%;width:46%;height:8%;border-radius:50%;background:rgba(0,0,0,.18);filter:blur(6px);animation:shade 5.5s ease-in-out infinite;animation-delay:var(--d,0s)}
+:root[data-theme=dark] .shadow{background:rgba(0,0,0,.6)}
+@keyframes shade{0%,100%{transform:scale(1.08);opacity:.8}50%{transform:scale(.9);opacity:.5}}
+.text{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.kicker{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tint)}
+.name{font-size:18px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.blurb{font-size:13px;line-height:1.35;color:var(--mute);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;min-height:calc(13px*1.35*4)}
+@media (min-width:760px){.blurb{-webkit-line-clamp:3;min-height:calc(13px*1.35*3)}}
+.host{margin-top:auto;padding-top:6px;font-size:11.5px;color:var(--mute);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden}
+.host span{overflow:hidden;text-overflow:ellipsis}
+.dot{width:8px;height:8px;border-radius:50%;border:2px solid var(--wait);flex:none}
+.card[data-s=up] .dot{background:var(--up);border-color:var(--up)}
+.card[data-s=down] .dot{background:var(--down);border-color:var(--down)}
+.card[data-s=checking] .dot{animation:blink 1.2s steps(2) infinite}
+.card[data-s=none] .dot{display:none}
+.card[data-s=down] .host{color:var(--down);font-weight:600}
+@keyframes blink{50%{opacity:.25}}
+.lock{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;opacity:.6}
 
-/* status dots: glass.css positions them for tiles; here they sit in the text */
-.card .dot { position: static; width: 7px; height: 7px; flex: none; }
-.dot.none { background: var(--ink-3); box-shadow: none; }
+/* the wide card (a laptop) spans two columns: counts as two cells, so seven apps fill a full 2x4 / 4x2 grid.
+   On the phone it is one full-width row; on desktop it fills the right half of the first row, the same height as
+   its neighbours. */
+.card.wide{grid-column:span 2}
+.card.wide .stage{aspect-ratio:2/1}
+.card.wide .blurb{min-height:0}
+.card.wide .host{padding-top:12px}
+@media (min-width:760px){.card.wide .stage{aspect-ratio:auto;flex:1;min-height:0}.card.wide .blurb{min-height:calc(13px*1.35*3)}}
 
-/* footer: the colophon */
-footer {
-  margin-top: 36px;
-  padding: 0 4px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px 18px;
-  font-size: 12.5px;
-  color: var(--ink-3);
-}
-footer .colophon { display: flex; align-items: center; gap: 18px; white-space: nowrap; }
-footer .colophon a { color: var(--ink-2); }
+/* screen bits */
+.sv .ink{fill:var(--sink)} .sv .mute{fill:var(--smute)} .sv .panel{fill:var(--spanel)} .sv .scr{fill:var(--screen)} .sv .fr{fill:var(--frame)} .sv .tint{fill:var(--tint)}
+.livepill{display:none;animation:blink 1.2s steps(2) infinite}
+.card.is-live .livepill{display:inline}
+.chart{stroke:var(--tint);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-dasharray:220;stroke-dashoffset:220;animation:draw 2.4s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.bell{transform-origin:50% 10%;animation:ring 3s ease-in-out infinite}
+@keyframes ring{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(14deg)}80%{transform:rotate(-12deg)}85%{transform:rotate(8deg)}90%{transform:rotate(-4deg)}}
+.doorleaf{transform-origin:14% 50%;transform:rotateY(0);transition:transform .5s ease}
+.card:hover .doorleaf{transform:rotateY(-55deg)}
+.doorlight{opacity:0;transition:opacity .5s}
+.card:hover .doorlight{opacity:1}
 
+footer{display:flex;justify-content:space-between;align-items:center;padding:28px 4px 0;font-size:13px;color:var(--mute)}
+footer a{text-decoration:underline;text-underline-offset:3px}
 
-@media (min-width: 900px) {
-  .page { padding-top: 22px; }
-  .hero { padding: 32px 4px 30px; }
-  .hero h1 { font-size: 56px; }
-  .hero p { font-size: 19px; margin-top: 18px; }
-  .board { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
-  .blurb { font-size: 14px; }
-  footer { margin-top: 40px; }
-}
+.paused .float,.paused .shadow,.paused .dot,.paused .bell,.paused .livepill,.paused .chart{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.chart{stroke-dashoffset:0}}
