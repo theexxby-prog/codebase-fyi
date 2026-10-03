@@ -46,8 +46,8 @@ every app; the earlier glass and three-look designs (Fable, 2026-09-28/29) are r
 - Status dots come from `https://home.codebase.fyi/api/public-status` (up/down only, for
   apps marked `public: true` in the home repo's `src/apps.js`). If it fails the dots stay
   neutral; the page never depends on it.
-- Only public apps get a card here. Loans, ledger, medical, house, books, plexpull,
-  pricegap and list live on the family home screen and are never linked or described
+- Only public apps get a card here. Loans, ledger, medical, house, books, plexpull
+  and list live on the family home screen and are never linked or described
   here.
 - `public/og.png` is a 1200×630 screenshot of the page (house look, light). Retake it after a
   big visual change.
