@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>codebase.fyi · Device wall</title>
+<script>
+(function(){var d=document.documentElement,t=new URLSearchParams(location.search).get('theme');
+if(t!=='light'&&t!=='dark'){t='light';try{if(localStorage.theme==='dark')t='dark'}catch(e){}}d.dataset.theme=t;})();
+</script>
+<style>
+:root{
+  --bg:#f4f4f1; --ink:#131313; --mute:#6b6b68; --line:rgba(0,0,0,.09); --card:#ffffff;
+  --frame:#1a1b1f; --screen:#ffffff; --sink:#1a1b1f; --smute:#9a9a9a; --spanel:#f1f1f3;
+  --up:#16a34a; --down:#e11d48; --wait:#a3a3a3;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+:root[data-theme=dark]{
+  --bg:#0c0d10; --ink:#f2f2f0; --mute:#9b9ea5; --line:rgba(255,255,255,.1); --card:#15171c;
+  --frame:#2a2c33; --screen:#1c1e24; --sink:#f2f2f0; --smute:#7d8188; --spanel:#262930;
+  --up:#4ade80; --down:#fb7185; --wait:#6b7280;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.page{max-width:1100px;margin:0 auto;padding:14px 16px 48px}
+
+nav{display:flex;align-items:center;justify-content:space-between;height:52px}
+.wordmark{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.wordmark span{font-weight:400;color:var(--mute)}
+.tools{display:flex;gap:8px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);font-size:14px;font-weight:600}
+.pill svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+.theme{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer}
+.theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.theme .i-sun{display:none}
+:root[data-theme=dark] .theme .i-moon{display:none}
+:root[data-theme=dark] .theme .i-sun{display:block}
+
+.hero{padding:36px 0 18px;max-width:760px}
+.hero h1{font-size:clamp(40px,7.5vw,72px);font-weight:800;letter-spacing:-.04em;line-height:1}
+.hero h1 em{font-style:normal;color:var(--mute);font-weight:500}
+.hero p{margin-top:14px;font-size:17px;color:var(--mute);max-width:48ch;line-height:1.45}
+
+/* live strip: filled by JS; hidden when there is nothing to say */
+.live{display:flex;gap:8px;align-items:center;margin:14px -16px 20px;padding:0 16px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.live::-webkit-scrollbar{display:none}
+.live[hidden]{display:none}
+.live .tag{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--down)}
+.live .tag i{width:7px;height:7px;border-radius:50%;background:currentColor;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(.5);opacity:.4}}
+.chip{flex:none;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px 0 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px;font-weight:600;white-space:nowrap;animation:rise .5s both;animation-delay:var(--d,0s)}
+.chip b{width:8px;height:8px;border-radius:2px;background:var(--tint);transform:rotate(45deg)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* grid: 2x4 phone, 4x2 desktop */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (min-width:760px){.grid{grid-template-columns:repeat(4,1fr);gap:16px}}
+.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;min-height:44px;transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 20px 40px -24px rgba(0,0,0,.35)}
+.card:focus-visible{outline:2px solid var(--tint);outline-offset:2px}
+.stage{position:relative;aspect-ratio:1/1;perspective:700px;display:grid;place-items:center;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 110%, color-mix(in srgb,var(--tint) 26%,transparent), transparent 60%)}
+
+.float{display:grid;place-items:center;width:100%;animation:bob 5.5s ease-in-out infinite;animation-delay:var(--d,0s);will-change:transform}
+@keyframes bob{0%,100%{transform:translateY(-4px)}50%{transform:translateY(4px)}}
+.dev{display:block;transform:rotateY(var(--ry,-20deg)) rotateX(var(--rx,9deg));transform-style:preserve-3d;transition:transform .18s ease-out;width:var(--w);filter:drop-shadow(0 18px 14px rgba(0,0,0,.22))}
+.dev svg{display:block;width:100%;height:auto}
+.shadow{position:absolute;bottom:10%;width:46%;height:8%;border-radius:50%;background:rgba(0,0,0,.18);filter:blur(6px);animation:shade 5.5s ease-in-out infinite;animation-delay:var(--d,0s)}
+:root[data-theme=dark] .shadow{background:rgba(0,0,0,.6)}
+@keyframes shade{0%,100%{transform:scale(1.08);opacity:.8}50%{transform:scale(.9);opacity:.5}}
+.text{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.kicker{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tint)}
+.name{font-size:18px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.blurb{font-size:13px;line-height:1.35;color:var(--mute);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;min-height:calc(13px*1.35*4)}
+@media (min-width:760px){.blurb{-webkit-line-clamp:3;min-height:calc(13px*1.35*3)}}
+.host{margin-top:auto;padding-top:6px;font-size:12px;color:var(--mute);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:8px;height:8px;border-radius:50%;border:2px solid var(--wait);flex:none}
+.card[data-s=up] .dot{background:var(--up);border-color:var(--up)}
+.card[data-s=down] .dot{background:var(--down);border-color:var(--down)}
+.card[data-s=checking] .dot{animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+.lock{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;opacity:.6}
+
+/* screen bits */
+.sv .ink{fill:var(--sink)} .sv .mute{fill:var(--smute)} .sv .panel{fill:var(--spanel)} .sv .scr{fill:var(--screen)} .sv .fr{fill:var(--frame)} .sv .tint{fill:var(--tint)}
+.livepill{animation:blink 1.2s steps(2) infinite}
+.chart{stroke:var(--tint);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-dasharray:220;stroke-dashoffset:220;animation:draw 2.4s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.bell{transform-origin:50% 10%;animation:ring 3s ease-in-out infinite}
+@keyframes ring{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(14deg)}80%{transform:rotate(-12deg)}85%{transform:rotate(8deg)}90%{transform:rotate(-4deg)}}
+.doorleaf{transform-origin:14% 50%;transform:rotateY(0);transition:transform .5s ease}
+.card:hover .doorleaf{transform:rotateY(-55deg)}
+.doorlight{opacity:0;transition:opacity .5s}
+.card:hover .doorlight{opacity:1}
+
+footer{display:flex;justify-content:space-between;align-items:center;padding:28px 4px 0;font-size:13px;color:var(--mute)}
+footer a{text-decoration:underline;text-underline-offset:3px}
+
+.paused .float,.paused .shadow,.paused .dot,.paused .bell,.paused .livepill,.paused .chart{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.chart{stroke-dashoffset:0}}
+</style>
+</head>
+<body>
+<main class="page">
+  <nav>
+    <a class="wordmark" href="/">codebase<span>.fyi</span></a>
+    <div class="tools">
+      <a class="pill" href="https://home.codebase.fyi"><svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Family</a>
+      <button class="theme" type="button" aria-label="Toggle dark mode">
+        <svg class="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>Vishal Mehta <em>makes small apps.</em></h1>
+    <p>Small apps I build on the side, mostly for the people I live with. A few are open to anyone. Pick a screen.</p>
+  </header>
+
+  <div class="live" id="live" hidden aria-label="Right now"></div>
+
+  <div class="grid">
+
+    <!-- 1 NFL: phone -->
+    <a class="card" href="https://nfl.codebase.fyi" data-id="nfl" data-s="checking" style="--tint:#3b82f6;--d:0s;--w:42%">
+      <span class="stage" aria-hidden="true"><span class="shadow"></span><span class="float"><span class="dev">
+        <svg class="sv" viewBox="0 0 120 240"><rect class="fr" width="120" height="240" rx="22"/><rect class="scr" x="6" y="6" width="108" height="228" rx="17"/><rect class="fr" x="38" y="12" width="44" height="9" rx="4.5"/>
+          <text x="14" y="42" font-size="11" font-weight="800" class="ink" font-family="-apple-system,Helvetica,Arial">Sunday</text>
+          <rect class="tint livepill" x="80" y="33" width="26" height="11" rx="5.5"/>
+          <g font-size="8" font-weight="700" font-family="-apple-system,Helvetica,Arial">
+            <rect class="panel" x="12" y="54" width="96" height="30" rx="8"/><text class="ink" x="20" y="67">DAL · PHI</text><text class="mute" x="20" y="78">1:00 pm · Fox</text>
+            <rect class="panel" x="12" y="90" width="96" height="30" rx="8"/><text class="ink" x="20" y="103">KC · BUF</text><text class="mute" x="20" y="114">4:25 pm · CBS</text>
+            <rect class="panel" x="12" y="126" width="96" height="30" rx="8"/><text class="ink" x="20" y="139">SF · SEA</text><text class="mute" x="20" y="150">8:20 pm · NBC</text>
+            <rect class="panel" x="12" y="162" width="96" height="30" rx="8"/><text class="ink" x="20" y="175">MIA · NYJ</text><text class="mute" x="20" y="186">Mon 8:15 pm</text>
+          </g>
+          <rect class="mute" x="40" y="222" width="40" height="4" rx="2"/>
+        </svg>
+      </span></span></span>
+      <span class="text"><span class="kicker">Sports</span><span class="name">NFL</span><span class="blurb">This week's games, kickoff times where you are, and where each one is streaming.</span><span class="host"><i class="dot"></i>nfl.codebase.fyi</span></span>
+    </a>
+
+    <!-- 2 Cricket: phone -->
+    <a class="card" href="https://cricket.codebase.fyi" data-id="cricket" data-s="checking" style="--tint:#22c55e;--d:-1.4s;--w:42%">
+      <span class="stage" aria-hidden="true"><span class="shadow"></span><span class="float"><span class="dev">
+        <svg class="sv" viewBox="0 0 120 240"><rect class="fr" width="120" height="240" rx="22"/><rect class="scr" x="6" y="6" width="108" height="228" rx="17"/><rect class="fr" x="38" y="12" width="44" height="9" rx="4.5"/>
+          <g font-family="-apple-system,Helvetica,Arial">
+            <text x="14" y="42" font-size="11" font-weight="800" class="ink">India</text>
+            <rect class="panel" x="12" y="52" width="96" height="58" rx="10"/>
+            <text x="20" y="72" font-size="9" font-weight="700" class="mute">IND v AUS · 2nd T20</text>
+            <text x="20" y="96" font-size="18" font-weight="800" class="ink">187/4</text>
+            <text x="74" y="96" font-size="9" font-weight="700" class="tint">18.2 ov</text>
+            <g class="bell"><path class="tint" d="M60 136c-9 0-14 7-14 16v10l-5 6h38l-5-6v-10c0-9-5-16-14-16z"/><circle class="tint" cx="60" cy="172" r="4"/></g>
+            <text x="60" y="194" text-anchor="middle" font-size="8" font-weight="700" class="mute">rings when play starts</text>
+          </g>
+          <rect class="mute" x="40" y="222" width="40" height="4" rx="2"/>
+        </svg>
+      </span></span></span>
+      <span class="text"><span class="kicker">Sports</span><span class="name">Cricket</span><span class="blurb">India's men's matches with live scores and a bell when play starts.</span><span class="host"><i class="dot"></i>cricket.codebase.fyi</span></span>
+    </a>
+
+    <!-- 3 Marker: phone -->
+    <a class="card" href="https://marker.codebase.fyi" data-id="marker" data-s="checking" style="--tint:#e11d48;--d:-2.8s;--w:42%">
+      <span class="stage" aria-hidden="true"><span class="shadow"></span><span class="float"><span class="dev">
+        <svg class="sv" viewBox="0 0 120 240"><rect class="fr" width="120" height="240" rx="22"/><rect class="scr" x="6" y="6" width="108" height="228" rx="17"/><rect class="fr" x="38" y="12" width="44" height="9" rx="4.5"/>
+          <g font-family="-apple-system,Helvetica,Arial" font-weight="700">
+            <text x="14" y="42" font-size="11" font-weight="800" class="ink">Friday table</text>
+            <g font-size="9"><rect class="panel" x="12" y="52" width="96" height="22" rx="7"/><text class="ink" x="20" y="67">Seat 1</text><text class="tint" x="78" y="67">+ 140</text>
+            <rect class="panel" x="12" y="80" width="96" height="22" rx="7"/><text class="ink" x="20" y="95">Seat 2</text><text class="mute" x="80" y="95">− 60</text>
+            <rect class="panel" x="12" y="108" width="96" height="22" rx="7"/><text class="ink" x="20" y="123">Seat 3</text><text class="mute" x="80" y="123">− 80</text></g>
+            <!-- chip stack -->
+            <g transform="translate(60 178)">
+              <ellipse class="tint" cx="0" cy="12" rx="22" ry="7"/><rect class="tint" x="-22" y="0" width="44" height="12"/><ellipse class="tint" cx="0" cy="0" rx="22" ry="7"/>
+              <ellipse fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="6 5" cx="0" cy="0" rx="16" ry="5"/>
+            </g>
+            <text x="60" y="206" text-anchor="middle" font-size="8" class="mute">settles at close</text>
+          </g>
+          <rect class="mute" x="40" y="222" width="40" height="4" rx="2"/>
+        </svg>
+      </span></span></span>
+      <span class="text"><span class="kicker">Games</span><span class="name">Marker</span><span class="blurb">Chip ledger for a home poker game. Settles everyone up at close.</span><span class="host"><i class="dot"></i>marker.codebase.fyi</span></span>
+    </a>
+
+    <!-- 4 Datamatics: laptop -->
+    <a class="card" href="https://datamatics.mehtahouse.cc" data-id="datamatics" data-s="checking" style="--tint:#0ea5e9;--d:-0.7s;--w:82%">
+      <span class="stage" aria-hidden="true"><span class="shadow"></span><span class="float"><span class="dev">
+        <svg class="sv" viewBox="0 0 260 170"><rect class="fr" x="22" y="6" width="216" height="140" rx="10"/><rect class="scr" x="30" y="14" width="200" height="124" rx="4"/>
+          <rect class="panel" x="30" y="14" width="46" height="124"/>
+          <g class="mute"><rect x="38" y="26" width="30" height="4" rx="2"/><rect x="38" y="38" width="24" height="4" rx="2"/><rect x="38" y="50" width="28" height="4" rx="2"/><rect x="38" y="62" width="20" height="4" rx="2"/></g>
+          <text x="86" y="32" font-size="9" font-weight="800" class="ink" font-family="-apple-system,Helvetica,Arial">Leads this month</text>
+          <rect class="panel" x="86" y="40" width="136" height="88" rx="6"/>
+          <path class="chart" d="M94 118 C110 110,118 96,130 100 S150 76,164 70 S186 62,196 50 S210 38,216 32"/>
+          <circle class="tint" cx="216" cy="32" r="3"/>
+          <path class="fr" d="M6 150h248l-10 10H16z"/><rect class="mute" x="110" y="150" width="40" height="3" rx="1.5"/>
+        </svg>
+      </span></span></span>
+      <span class="text"><span class="kicker">Work</span><span class="name">Datamatics</span><span class="blurb">Client portal for a B2B lead-generation business.</span><span class="host"><i class="dot"></i>datamatics.mehtahouse.cc</span></span>
+    </a>
+
+    <!-- 5 Shania: browser window -->
+    <a class="card" href="https://shania.mehtahouse.cc" data-id="shania" data-s="checking" style="--tint:#f43f5e;--d:-2.1s;--w:80%">
+      <span class="stage" aria-hidden="true"><span class="shadow"></span><span class="float"><span class="dev">
+        <svg class="sv" viewBox="0 0 220 150"><rect class="scr" width="220" height="150" rx="10"/><rect class="panel" width="220" height="22" rx="10"/><rect class="panel" y="12" width="220" height="10"/>
+          <circle cx="12" cy="11" r="3.5" fill="#ff5f57"/><circle cx="23" cy="11" r="3.5" fill="#febc2e"/><circle cx="34" cy="11" r="3.5" fill="#28c840"/>
+          <rect class="scr" x="60" y="6" width="100" height="10" rx="5"/>
+          <text x="16" y="48" font-size="13" font-weight="800" class="ink" font-family="-apple-system,Helvetica,Arial">Shania</text>
+          <text x="16" y="62" font-size="8" font-weight="600" class="mute" font-family="-apple-system,Helvetica,Arial">PR strategy · New York</text>
+          <g class="tint"><rect x="16" y="98" width="18" height="40"/><rect x="38" y="84" width="14" height="54"/><rect x="56" y="104" width="22" height="34"/><rect x="82" y="72" width="16" height="66"/><rect x="102" y="92" width="12" height="46"/><rect x="118" y="60" width="10" height="78"/><rect x="132" y="98" width="20" height="40"/><rect x="156" y="80" width="14" height="58"/><rect x="174" y="108" width="30" height="30"/></g>
+          <rect class="ink" x="138" y="48" width="56" height="18" rx="9"/><text x="166" y="60" text-anchor="middle" font-size="8" font-weight="700" fill="var(--screen)" font-family="-apple-system,Helvetica,Arial">Say hello</text>
+        </svg>
+      </span></span></span>
+      <span class="text"><span class="kicker">Made for</span><span class="name">Shania</span><span class="blurb">Portfolio for a PR strategist in New York.</span><span class="host"><i class="dot"></i>shania.mehtahouse.cc</span></span>
+    </a>
+
+    <!-- 6 Samara: browser window -->
+    <a class="card" href="https://samara.mehtahouse.cc" data-id="samara" data-s="checking" style="--tint:#f59e0b;--d:-3.6s;--w:80%">
+      <span class="stage" aria-hidden="true"><span class="shadow"></span><span class="float"><span class="dev">
+        <svg class="sv" viewBox="0 0 220 150"><rect class="scr" width="220" height="150" rx="10"/><rect class="panel" width="220" height="22" rx="10"/><rect class="panel" y="12" width="220" height="10"/>
+          <circle cx="12" cy="11" r="3.5" fill="#ff5f57"/><circle cx="23" cy="11" r="3.5" fill="#febc2e"/><circle cx="34" cy="11" r="3.5" fill="#28c840"/>
+          <rect class="scr" x="60" y="6" width="100" height="10" rx="5"/>
+          <text x="16" y="48" font-size="13" font-weight="800" class="ink" font-family="-apple-system,Helvetica,Arial">Samara</text>
+          <text x="16" y="62" font-size="8" font-weight="600" class="mute" font-family="-apple-system,Helvetica,Arial">Hospitality · Kinesiology</text>
+          <g class="tint"><path d="M110 128c0-26 18-44 44-44s44 18 44 44z"/><rect x="100" y="128" width="108" height="6" rx="3"/><circle cx="154" cy="80" r="4"/></g>
+          <g class="mute"><rect x="16" y="84" width="60" height="5" rx="2.5"/><rect x="16" y="96" width="48" height="5" rx="2.5"/><rect x="16" y="108" width="56" height="5" rx="2.5"/><rect x="16" y="120" width="36" height="5" rx="2.5"/></g>
+        </svg>
+      </span></span></span>
+      <span class="text"><span class="kicker">Made for</span><span class="name">Samara</span><span class="blurb">Portfolio for a hospitality professional and kinesiology student.</span><span class="host"><i class="dot"></i>samara.mehtahouse.cc</span></span>
+    </a>
+
+    <!-- 7 NFLBar: Mac menu bar -->
+    <a class="card" href="https://github.com/theexxby-prog/nflbar" data-id="nflbar" data-s="checking" style="--tint:#64748b;--d:-1.9s;--w:82%">
+      <span class="stage" aria-hidden="true"><span class="shadow"></span><span class="float"><span class="dev">
+        <svg class="sv" viewBox="0 0 260 150"><rect class="scr" width="260" height="150" rx="12"/><rect class="panel" width="260" height="20" rx="12"/><rect class="panel" y="10" width="260" height="10"/>
+          <g font-family="-apple-system,Helvetica,Arial" font-size="8" font-weight="700">
+            <path class="ink" d="M14 6.5c1.5-2 4-2 5-1-1 1-2 2.5-1 4.5 1-1 2.5-1 3.5 0-2 0-3 3-2 5-1.5 1.5-4 1.5-5 0-1-1.5-2.5-5-.5-8.5z"/>
+            <text class="ink" x="28" y="14">Finder</text><text class="mute" x="60" y="14">File</text><text class="mute" x="80" y="14">Edit</text>
+            <rect class="ink" x="150" y="4" width="62" height="12" rx="6"/>
+            <ellipse cx="160" cy="10" rx="5" ry="3.2" fill="#b45309" transform="rotate(-30 160 10)"/>
+            <text x="169" y="13.5" fill="var(--screen)">DAL 24 · PHI 17</text>
+            <text class="ink" x="220" y="14">1:42</text>
+            <!-- dropdown -->
+            <rect class="panel" x="128" y="24" width="112" height="92" rx="8"/>
+            <text class="ink" x="138" y="40">Live</text>
+            <rect class="scr" x="136" y="46" width="96" height="18" rx="5"/><text class="ink" x="142" y="58">DAL 24 · PHI 17</text><text x="206" y="58" class="tint">Q3</text>
+            <rect class="scr" x="136" y="68" width="96" height="18" rx="5"/><text class="ink" x="142" y="80">KC 7 · BUF 10</text><text x="206" y="80" class="tint">Q2</text>
+            <rect class="scr" x="136" y="90" width="96" height="18" rx="5"/><text class="mute" x="142" y="102">SF · SEA</text><text x="196" y="102" class="mute">8:20</text>
+          </g>
+        </svg>
+      </span></span></span>
+      <span class="text"><span class="kicker">Mac</span><span class="name">NFLBar</span><span class="blurb">NFL scores in the Mac menu bar. Open source.</span><span class="host"><i class="dot"></i>github.com/theexxby-prog/nflbar</span></span>
+    </a>
+
+    <!-- 8 Home: the door -->
+    <a class="card" href="https://home.codebase.fyi" data-id="home" data-s="checking" style="--tint:#14b8a6;--d:-0.3s;--w:44%">
+      <span class="stage" aria-hidden="true"><span class="shadow"></span><span class="float"><span class="dev">
+        <svg class="sv" viewBox="0 0 150 230"><rect class="fr" x="10" y="0" width="130" height="220" rx="10"/><rect class="doorlight" x="22" y="12" width="106" height="208" rx="4" fill="#ffd27a"/>
+          <g class="doorleaf"><rect class="tint" x="22" y="12" width="106" height="208" rx="4"/>
+            <rect x="36" y="28" width="78" height="72" rx="4" fill="rgba(0,0,0,.18)"/><rect x="36" y="112" width="78" height="92" rx="4" fill="rgba(0,0,0,.18)"/>
+            <circle cx="112" cy="118" r="5" fill="#fff4d6"/>
+            <rect x="60" y="58" width="30" height="12" rx="2" fill="rgba(255,255,255,.7)"/><text x="75" y="67" text-anchor="middle" font-size="8" font-weight="800" fill="#0f766e" font-family="-apple-system,Helvetica,Arial">PIN</text>
+          </g>
+          <rect class="mute" x="30" y="222" width="90" height="8" rx="2"/>
+        </svg>
+      </span></span></span>
+      <span class="text"><span class="kicker">Family</span><span class="name">Home <svg class="lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="blurb">Loans, bills, the house, books and the shopping lists are for the family. One PIN opens the home screen.</span><span class="host"><i class="dot"></i>home.codebase.fyi</span></span>
+    </a>
+
+  </div>
+
+  <footer>
+    <span>© 2026 Vishal Mehta</span>
+    <a href="https://github.com/theexxby-prog/codebase-fyi">Source on GitHub</a>
+  </footer>
+</main>
+
+<script>
+(function(){
+  var root=document.documentElement, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelector('.theme').addEventListener('click',function(){
+    var t=root.dataset.theme==='dark'?'light':'dark'; root.dataset.theme=t; try{localStorage.theme=t}catch(e){}
+  });
+
+  // DEMO live strip. In real life the NFL and Cricket feeds fill this; an empty list means the strip stays hidden.
+  var DEMO_LIVE=[
+    {id:'cricket',tint:'#22c55e',text:'India play in 2h 10m',href:'https://cricket.codebase.fyi'},
+    {id:'nfl',tint:'#3b82f6',text:'NFL: 3 games Sunday',href:'https://nfl.codebase.fyi'},
+    {id:'nfl',tint:'#3b82f6',text:'DAL · PHI kicks off 1:00 pm',href:'https://nfl.codebase.fyi'}
+  ];
+  if(new URLSearchParams(location.search).get('quiet')) DEMO_LIVE=[];
+  var live=document.getElementById('live');
+  if(DEMO_LIVE.length){
+    live.innerHTML='<span class="tag"><i></i>RIGHT NOW</span>'+DEMO_LIVE.map(function(x,i){
+      return '<a class="chip" href="'+x.href+'" style="--tint:'+x.tint+';--d:'+(i*.08)+'s"><b></b>'+x.text+'</a>';}).join('');
+    live.hidden=false;
+  }
+
+  // DEMO status (real: https://home.codebase.fyi/api/public-status)
+  var DEMO={nfl:'up',cricket:'up',marker:'up',datamatics:'up',shania:'up',samara:'up',nflbar:'checking',home:'up'};
+  var down=new URLSearchParams(location.search).get('down'); if(down&&DEMO[down]!==undefined)DEMO[down]='down';
+  setTimeout(function(){Object.keys(DEMO).forEach(function(k){var c=document.querySelector('.card[data-id="'+k+'"]');if(c)c.dataset.s=DEMO[k];});},900);
+
+  // Pointer tilt
+  if(!reduce && matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.card').forEach(function(card){
+      var dev=card.querySelector('.dev');
+      card.addEventListener('pointermove',function(e){
+        var r=card.getBoundingClientRect(),dx=(e.clientX-r.left)/r.width*2-1,dy=(e.clientY-r.top)/r.height*2-1;
+        dev.style.setProperty('--ry',(-20+dx*24)+'deg');dev.style.setProperty('--rx',(9-dy*16)+'deg');
+      });
+      card.addEventListener('pointerleave',function(){dev.style.removeProperty('--ry');dev.style.removeProperty('--rx');});
+    });
+  }
+
+  // Pause when off-screen or tab hidden
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('paused',!e.isIntersecting)})},{rootMargin:'40px'});
+    document.querySelectorAll('.card').forEach(function(c){io.observe(c)});
+  }
+  document.addEventListener('visibilitychange',function(){document.body.classList.toggle('paused',document.hidden)});
+})();
+</script>
+</body>
+</html>

@@ -80,10 +80,25 @@ cloud sessions at claude.ai/code. A cloud session sees only this repo, not the M
    it under "Not deployed yet" so the next Mac session ships it.
 
 ## Current state
-_Updated 2026-10-01 from the Mac._
-- **Live 2026-10-01: house style only.** The house look became the default, then Ink, Emblem and
-  Postcards were retired the same day (their CSS, drawings, the footer switch, the seal, the pointer
-  sheen). Same content and 8 cards. Symmetry check OK light and dark at 390 and 1440. `public/og.png`
-  is in the house look.
-- **Open:** check on a real iPhone. The remote branch `claude/webpage-styling-issues-rgssn3`
-  (2026-09-14) is stale, nothing ahead of main.
+_Updated 2026-10-03 from the Mac (IN PROGRESS: the redesign is not live yet)._
+- **Redesign underway: "Device wall + live strip" (Fable's design B, chosen by Vishal 2026-10-03).** The
+  approved mockup is `design/device-wall-mockup.html` (open it in a browser; it has demo data). The live site
+  is still the 2026-10-01 house-style card grid until this ships.
+- **Done:** `home.codebase.fyi/api/public-now` is live (home repo `src/now.js`, commit facc152): next India
+  match + this week's NFL games, public fields only, CORS open, 5-min cache. The strip and the NFL, Cricket and
+  NFLBar phone screens should be filled from it.
+- **To do (the build, in this repo):**
+  1. Rewrite `index.html` from the mockup: hero "Vishal Mehta makes small apps.", the hidden-when-empty live
+     strip, 8 device cards (NFL/Cricket/Marker phones, Datamatics laptop, Shania/Samara browser windows,
+     NFLBar menu bar, Home door). System font only: drop the Google Fonts link. Keep the head (og, canonical,
+     theme-color, the theme script) and the Family pill + moon/sun toggle top right.
+  2. Replace `src/look-house.css`, `src/glass.css`, `src/site.css` with one stylesheet from the mockup; rewrite
+     `src/main.js` (status dots from `/api/public-status`, strip + screens from `/api/public-now`, pointer tilt,
+     off-screen pause).
+  3. **Don't ship made-up scores or numbers.** The mockup's phone screens show fake matchups and Marker totals.
+     Use neutral placeholder bars in the HTML, and fill real games/match only from the feed. Dots: NFLBar and
+     Home have no status feed, so hide their dot; others blink only while the fetch is pending.
+  4. Grid stays 2x4 / 4x2, equal card heights, light by default, dark only from the toggle, no prefers-color-scheme.
+  5. Retake `public/og.png`, update this file and README, push to `main` (Vercel deploys). Check the live JS
+     filename against a local build (see Rules).
+- **Not deployed yet:** the redesign itself (nothing of it is on `main` except this note and the mockup).
