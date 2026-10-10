@@ -26,7 +26,8 @@ nav{display:flex;align-items:center;justify-content:space-between;height:52px}
 .tools{display:flex;gap:8px;align-items:center}
 .pill{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);font-size:14px;font-weight:600}
 .pill svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
-.theme{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer}
+.theme{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer;transition:transform .1s}
+.theme:active{transform:scale(.92)}
 .theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .theme .i-sun{display:none}
 :root[data-theme=dark] .theme .i-moon{display:none}
@@ -53,6 +54,8 @@ nav{display:flex;align-items:center;justify-content:space-between;height:52px}
 @media (min-width:760px){.grid{grid-template-columns:repeat(4,1fr);gap:16px}}
 .card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;min-height:44px;transition:transform .25s,box-shadow .25s}
 .card:hover{transform:translateY(-3px);box-shadow:0 20px 40px -24px rgba(0,0,0,.35)}
+.card:active{transform:translateY(-1px) scale(.985);transition-duration:.1s}
+.chip{transition:transform .1s}.chip:active{transform:scale(.96)}
 .card:focus-visible{outline:2px solid var(--tint);outline-offset:2px}
 .stage{position:relative;aspect-ratio:1/1;perspective:700px;display:grid;place-items:center;overflow:hidden}
 .stage::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 110%,var(--tint),transparent 60%);opacity:.26}
@@ -74,6 +77,9 @@ nav{display:flex;align-items:center;justify-content:space-between;height:52px}
 .dot{width:8px;height:8px;border-radius:50%;border:2px solid var(--wait);flex:none}
 .card[data-s=up] .dot{background:var(--up);border-color:var(--up)}
 .card[data-s=down] .dot{background:var(--down);border-color:var(--down)}
+/* when the status feed answers, the dot settles once (checking -> up/down); cards that start up never animate */
+.card[data-s=up] .dot,.card[data-s=down] .dot{animation:settle .45s cubic-bezier(.3,1.4,.5,1)}
+@keyframes settle{from{transform:scale(.3);opacity:.3}to{transform:none;opacity:1}}
 .card[data-s=checking] .dot{animation:blink 1.2s steps(2) infinite}
 .card[data-s=none] .dot{display:none}
 .card[data-s=down] .host{color:var(--down);font-weight:600}

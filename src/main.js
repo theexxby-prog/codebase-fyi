@@ -130,8 +130,19 @@ function paintNow(now) {
   const items = chips(now);
   const live = $("#live");
   if (items.length && live) {
-    live.innerHTML = '<span class="tag"><i></i>RIGHT NOW</span>' + items.map((x, i) =>
-      `<a class="chip" href="${x.href}" style="--tint:${x.tint};--d:${(i * 0.08).toFixed(2)}s"><b></b>${esc(x.text)}</a>`).join("");
+    // Built with the DOM (no style="" in HTML strings), so a strict CSP can't strip the tints.
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.append(document.createElement("i"), "RIGHT NOW");
+    live.replaceChildren(tag, ...items.map((x, i) => {
+      const a = document.createElement("a");
+      a.className = "chip";
+      a.href = x.href;
+      a.style.setProperty("--tint", x.tint);
+      a.style.setProperty("--d", `${(i * 0.08).toFixed(2)}s`);
+      a.append(document.createElement("b"), x.text);
+      return a;
+    }));
     live.hidden = false;
   }
   fillNflPhone(now.nfl);

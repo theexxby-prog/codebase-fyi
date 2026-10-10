@@ -88,7 +88,20 @@ cloud sessions at claude.ai/code. A cloud session sees only this repo, not the M
    it under "Not deployed yet" so the next Mac session ships it.
 
 ## Current state
-_Updated 2026-10-03 from the Mac._
+_Updated 2026-10-10 from the Mac (overnight motion + security pass)._
+- **Motion (from Vishal's Motion Lab picks), small on purpose; the page already had its own:** cards and the
+  Right-now chips sink slightly while pressed, the theme button too; a status dot settles once (`settle`, transform
+  + opacity only) when the feed answers. Reduced motion: none of it (the existing `*{animation:none}` rule).
+- **Right-now chips are built with the DOM** (`style.setProperty` for `--tint`/`--d`), not `style=""` in an HTML
+  string, so a future CSP can't strip them.
+- **Security headers via `vercel.json`:** nosniff, Referrer-Policy, X-Frame-Options DENY + `frame-ancestors 'none'`,
+  Permissions-Policy. No full CSP yet (inline head script + `style=` on the cards would need hashes/rework).
+- **Checked:** tests 5/5, build, headless preview at 1280 and 390 (dark), live feeds: chips render with tints,
+  card press `scale(.985)`, all five dots ran `settle`, no horizontal scroll, reduced motion 0 animations, no
+  console errors. Build has no env vars or source maps; links public only.
+- Branch `claude/webpage-styling-issues-rgssn3` is already merged into main (safe to delete).
+
+_2026-10-03 from the Mac:_
 - **Live 2026-10-03: the Device wall redesign** (7 apps, Datamatics wide; Marker card removed because the app
   was retired the same day). Strip and the NFL / Cricket / NFLBar screens read the live feed. Tests 5/5, desktop
   and phone checked light and dark at 390 and 1156 wide: full rectangle, equal heights, no horizontal scroll.
